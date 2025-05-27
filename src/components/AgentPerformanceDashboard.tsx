@@ -6,6 +6,40 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 
+// Fonction utilitaire pour valider et transformer les données equity_curve_data
+const parseEquityCurveData = (data: any): EquityDataPoint[] => {
+  if (!data) return [];
+  
+  try {
+    // Si c'est déjà un tableau
+    if (Array.isArray(data)) {
+      return data.filter(item => 
+        item && 
+        typeof item === 'object' && 
+        'date' in item && 
+        'value' in item &&
+        typeof item.value === 'number'
+      ).map(item => ({
+        date: String(item.date),
+        value: Number(item.value)
+      }));
+    }
+    
+    // Si c'est une string JSON, essayer de la parser
+    if (typeof data === 'string') {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        return parseEquityCurveData(parsed);
+      }
+    }
+    
+    return [];
+  } catch (error) {
+    console.warn("Erreur lors du parsing des données equity_curve_data:", error);
+    return [];
+  }
+};
+
 const fetchAgentPerformanceData = async (): Promise<Agent[]> => {
   console.log("🔄 Début de la récupération des données agent_metrics...");
   
@@ -49,26 +83,9 @@ const fetchAgentPerformanceData = async (): Promise<Agent[]> => {
     const agents: Agent[] = agentMetricsData.map((item, index) => {
       console.log(`🔄 Transformation de l'agent ${index + 1}:`, item);
       
-      // Vérification et transformation des données equity_curve_data
-      let equityData: EquityDataPoint[] = [];
-      if (item.equity_curve_data) {
-        try {
-          // Si c'est déjà un array, l'utiliser directement
-          if (Array.isArray(item.equity_curve_data)) {
-            equityData = item.equity_curve_data as EquityDataPoint[];
-          } else if (typeof item.equity_curve_data === 'string') {
-            // Si c'est une string, essayer de la parser
-            equityData = JSON.parse(item.equity_curve_data) as EquityDataPoint[];
-          } else {
-            // Si c'est un objet, l'utiliser tel quel
-            equityData = item.equity_curve_data as EquityDataPoint[];
-          }
-          console.log(`📈 Données equity curve pour ${item.agent_name}:`, equityData);
-        } catch (parseError) {
-          console.warn(`⚠️ Erreur parsing equity_curve_data pour ${item.agent_name}:`, parseError);
-          equityData = [];
-        }
-      }
+      // Transformation sécurisée des données equity_curve_data
+      const equityData = parseEquityCurveData(item.equity_curve_data);
+      console.log(`📈 Données equity curve pour ${item.agent_name}:`, equityData);
 
       const transformedAgent: Agent = {
         id: item.id || `fallback-id-${Math.random()}`,
