@@ -1,5 +1,5 @@
 // src/components/MarketStats.tsx
-import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon, TrendingDownIcon, ActivityIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton"; // Pour l'état de chargement
 
@@ -98,22 +98,17 @@ const MarketStats = () => {
       <div className="glass-card p-6 rounded-lg">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-muted-foreground">24h Volume</h3>
-          {/* CoinGecko ne fournit pas de % de changement de volume global direct dans cet endpoint */}
-          {/* On pourrait le calculer si on stockait la valeur précédente ou utiliser une autre source */}
           <TrendingUpIcon className="w-4 h-4 text-muted-foreground" />
         </div>
         <p className="text-2xl font-semibold mt-2">{formatLargeNumber(volume24h)}</p>
-        {/* Pas de % de changement direct pour le volume ici */}
       </div>
       
       <div className="glass-card p-6 rounded-lg">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-muted-foreground">BTC Dominance</h3>
-           {/* CoinGecko ne fournit pas de % de changement de dominance BTC direct */}
           <ActivityIcon className="w-4 h-4 text-muted-foreground" />
         </div>
         <p className="text-2xl font-semibold mt-2">{formatPercentage(btcDominance)}</p>
-         {/* Pas de % de changement direct pour la dominance ici */}
       </div>
     </div>
   );
