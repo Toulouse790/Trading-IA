@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import AgentCard, { Agent, EquityDataPoint } from "./AgentCard"; // Assurez-vous que le chemin est correct
 import { Skeleton } from "@/components/ui/skeleton"; //
+import { Card, CardHeader, CardContent } from "@/components/ui/card"; // AJOUT DES IMPORTS MANQUANTS
 
 // Remplacez ceci par votre client Supabase et votre logique de fetch
 // import { supabase } from '@/lib/supabaseClient'; // Exemple d'importation
