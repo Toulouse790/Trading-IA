@@ -60,6 +60,54 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_metrics: {
+        Row: {
+          agent_id: string | null
+          agent_name: string | null
+          cumulative_return_percentage: number | null
+          currency_pair: string | null
+          current_drawdown_percentage: number | null
+          equity_curve_data: Json | null
+          id: string
+          last_updated: string | null
+          max_drawdown_percentage: number | null
+          status: string | null
+          timeframe: string | null
+          weekly_return_percentage: number | null
+          win_rate_percentage: number | null
+        }
+        Insert: {
+          agent_id?: string | null
+          agent_name?: string | null
+          cumulative_return_percentage?: number | null
+          currency_pair?: string | null
+          current_drawdown_percentage?: number | null
+          equity_curve_data?: Json | null
+          id?: string
+          last_updated?: string | null
+          max_drawdown_percentage?: number | null
+          status?: string | null
+          timeframe?: string | null
+          weekly_return_percentage?: number | null
+          win_rate_percentage?: number | null
+        }
+        Update: {
+          agent_id?: string | null
+          agent_name?: string | null
+          cumulative_return_percentage?: number | null
+          currency_pair?: string | null
+          current_drawdown_percentage?: number | null
+          equity_curve_data?: Json | null
+          id?: string
+          last_updated?: string | null
+          max_drawdown_percentage?: number | null
+          status?: string | null
+          timeframe?: string | null
+          weekly_return_percentage?: number | null
+          win_rate_percentage?: number | null
+        }
+        Relationships: []
+      }
       bougies_eurusd_h1: {
         Row: {
           close: number | null
