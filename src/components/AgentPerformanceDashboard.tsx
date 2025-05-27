@@ -1,118 +1,71 @@
-
 // src/components/AgentPerformanceDashboard.tsx
 import { useQuery } from "@tanstack/react-query";
-import AgentCard, { Agent, EquityDataPoint } from "./AgentCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+import AgentCard, { Agent, EquityDataPoint } from "./AgentCard"; // Assurez-vous que le chemin est correct
+import { Skeleton } from "@/components/ui/skeleton"; //
+import { Card, CardHeader, CardContent } from "@/components/ui/card"; //
+import { supabase } from "@/integrations/supabase/client"; // Correction de l'import
+
+// L'interface Agent doit correspondre aux colonnes de votre table agent_metrics
+// et à ce que AgentCard attend.
 
 const fetchAgentPerformanceData = async (): Promise<Agent[]> => {
-  try {
-    // Pour l'instant, nous allons interroger la table Agent_messages pour récupérer les données d'agents
-    // Vous pourrez ajuster cette requête selon votre structure de données exacte
-    const { data: agentData, error } = await supabase
-      .from('Agent_messages')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
+  // Interroger la table 'agent_metrics' que vous avez créée
+  const { data: agentMetricsData, error } = await supabase
+    .from('agent_metrics') // Nom de la table créée avec le SQL
+    .select(`
+      id, 
+      agent_id,
+      agent_name,
+      currency_pair,
+      timeframe,
+      weekly_return_percentage,
+      cumulative_return_percentage,
+      max_drawdown_percentage,
+      current_drawdown_percentage,
+      win_rate_percentage,
+      status,
+      equity_curve_data,
+      last_updated
+    `)
+    .order('agent_name', { ascending: true });
 
-    if (error) {
-      console.error("Erreur lors de la récupération des données Supabase:", error);
-      throw new Error(error.message || "Impossible de récupérer les performances des agents.");
-    }
-
-    // Transformer les données de la table Agent_messages en format Agent
-    // Ceci est un exemple - vous devrez ajuster selon votre structure de données réelle
-    const agents: Agent[] = agentData?.map((item, index) => {
-      // Génération de données d'equity curve de démonstration
-      const demoEquityData: EquityDataPoint[] = [];
-      let value = 1000 + (index * 100);
-      for (let i = 0; i < 30; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() - (30 - i));
-        value += Math.random() * 20 - 8;
-        demoEquityData.push({ 
-          date: date.toISOString().split('T')[0], 
-          value: parseFloat(value.toFixed(2)) 
-        });
-      }
-
-      return {
-        id: item.id?.toString() || `agent-${index}`,
-        agent_name: item.agent_id || `Agent ${index + 1}`,
-        currency_pair: "EUR/USD", // Valeur par défaut, à ajuster selon vos données
-        timeframe: "H1", // Valeur par défaut, à ajuster selon vos données
-        weekly_return_percentage: Math.random() * 4 - 2, // Données simulées
-        cumulative_return_percentage: Math.random() * 10 - 5,
-        max_drawdown_percentage: -(Math.random() * 5),
-        current_drawdown_percentage: -(Math.random() * 2),
-        win_rate_percentage: 50 + Math.random() * 30,
-        status: (item.etat === "actif" ? "Opérationnel" : "En Test") as Agent["status"],
-        equity_curve_data: demoEquityData,
-        last_updated: item.created_at || new Date().toISOString(),
-      };
-    }) || [];
-
-    return agents;
-
-  } catch (error) {
-    console.error("Erreur lors de la récupération des données:", error);
-    
-    // En cas d'erreur, retourner des données de démonstration
-    const demoEquityData1: EquityDataPoint[] = [];
-    let value1 = 1000;
-    for (let i = 0; i < 30; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() - (30 - i));
-      value1 += Math.random() * 20 - 8;
-      demoEquityData1.push({ date: date.toISOString().split('T')[0], value: parseFloat(value1.toFixed(2)) });
-    }
-
-    const demoEquityData2: EquityDataPoint[] = [];
-    let value2 = 1000;
-    for (let i = 0; i < 30; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() - (30 - i));
-      value2 += Math.random() * 30 - 15;
-      demoEquityData2.push({ date: date.toISOString().split('T')[0], value: parseFloat(value2.toFixed(2)) });
-    }
-    
-    return [
-      {
-        id: "1",
-        agent_name: "Agent EUR/USD H1 (Connecté à Supabase)",
-        currency_pair: "EUR/USD",
-        timeframe: "H1",
-        weekly_return_percentage: 1.25,
-        cumulative_return_percentage: 5.80,
-        max_drawdown_percentage: -2.5,
-        current_drawdown_percentage: -0.5,
-        win_rate_percentage: 62.5,
-        status: "Opérationnel",
-        equity_curve_data: demoEquityData1,
-        last_updated: new Date().toISOString(),
-      },
-      {
-        id: "2",
-        agent_name: "Agent GBP/JPY M30 (Test Supabase)",
-        currency_pair: "GBP/JPY",
-        timeframe: "M30",
-        weekly_return_percentage: -0.5,
-        cumulative_return_percentage: -1.2,
-        max_drawdown_percentage: -3.1,
-        current_drawdown_percentage: -1.1,
-        win_rate_percentage: 45.0,
-        status: "En Test",
-        equity_curve_data: demoEquityData2,
-        last_updated: new Date(Date.now() - 3600000).toISOString(),
-      },
-    ];
+  if (error) {
+    console.error("Erreur Supabase lors de la récupération des métriques agents:", error);
+    // Il est préférable de lancer l'erreur pour que React Query la gère
+    // et affiche le composant d'erreur dans l'UI.
+    throw new Error(error.message || "Impossible de récupérer les performances des agents.");
   }
+
+  if (!agentMetricsData) {
+    return []; // Retourner un tableau vide si aucune donnée n'est trouvée
+  }
+
+  // Transformer les données de la table agent_metrics en format Agent
+  const agents: Agent[] = agentMetricsData.map(item => {
+    // Assurez-vous que les noms de propriétés ici correspondent aux noms de colonnes
+    // de votre table 'agent_metrics' et aux propriétés de l'interface 'Agent'.
+    return {
+      id: item.id || `fallback-id-${Math.random()}`, // L'ID devrait toujours être présent
+      agent_name: item.agent_name || "Agent Inconnu",
+      currency_pair: item.currency_pair || "N/A",
+      timeframe: item.timeframe || "N/A",
+      weekly_return_percentage: item.weekly_return_percentage, // Devrait être un nombre ou null
+      cumulative_return_percentage: item.cumulative_return_percentage, // Devrait être un nombre ou null
+      max_drawdown_percentage: item.max_drawdown_percentage, // Devrait être un nombre ou null
+      current_drawdown_percentage: item.current_drawdown_percentage, // Devrait être un nombre ou null
+      win_rate_percentage: item.win_rate_percentage, // Devrait être un nombre ou null
+      status: (item.status || "Inactif") as Agent["status"], // Assurer la conformité avec le type
+      equity_curve_data: (item.equity_curve_data || []) as EquityDataPoint[], // S'assurer que c'est un tableau
+      last_updated: item.last_updated || new Date().toISOString(),
+    };
+  });
+
+  return agents;
 };
 
 const AgentPerformanceDashboard = () => {
   const { data: agents, isLoading, error } = useQuery<Agent[], Error>({
-    queryKey: ['agentPerformance'],
+    queryKey: ['agentPerformanceMetrics'], // Changé la clé pour éviter les conflits si l'ancienne est cachée
     queryFn: fetchAgentPerformanceData,
     refetchInterval: 60000, // Rafraîchir toutes les minutes
   });
@@ -123,9 +76,9 @@ const AgentPerformanceDashboard = () => {
         <h2 className="text-2xl font-bold mb-6">Performances des Agents IA</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="glass-card">
+            <Card key={i} className="glass-card"> {/* */}
               <CardHeader>
-                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-6 w-3/4 mb-2" /> {/* */}
                 <Skeleton className="h-4 w-1/2" />
               </CardHeader>
               <CardContent>
@@ -154,7 +107,7 @@ const AgentPerformanceDashboard = () => {
 
   if (error) {
     return (
-      <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in bg-destructive/20 border-destructive">
+      <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in bg-destructive/20 border-destructive"> {/* */}
         <h2 className="text-2xl font-bold mb-2 text-destructive-foreground">Erreur de chargement des performances</h2>
         <p className="text-destructive-foreground/80">{error.message}</p>
       </div>
@@ -163,7 +116,7 @@ const AgentPerformanceDashboard = () => {
 
   if (!agents || agents.length === 0) {
     return (
-       <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
+       <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in"> {/* */}
         <h2 className="text-2xl font-bold mb-6">Performances des Agents IA</h2>
         <p className="text-muted-foreground">Aucune donnée de performance d'agent disponible pour le moment.</p>
       </div>
@@ -172,9 +125,9 @@ const AgentPerformanceDashboard = () => {
 
   return (
     <div className="mb-8 animate-fade-in">
-      <h2 className="text-2xl font-bold mb-6">Performances des Agents IA (Connecté à Supabase)</h2>
+      <h2 className="text-2xl font-bold mb-6">Performances des Agents IA</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {agents?.map((agent) => (
+        {agents.map((agent) => (
           <AgentCard key={agent.id} agent={agent} />
         ))}
       </div>
