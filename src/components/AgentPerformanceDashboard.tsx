@@ -1,7 +1,8 @@
 
 // src/components/AgentPerformanceDashboard.tsx
 import { useQuery } from "@tanstack/react-query";
-import AgentCard, { Agent, EquityDataPoint } from "./AgentCard";
+import AgentPerformanceCard from "./AgentPerformanceCard";
+import { Agent, EquityDataPoint } from "@/types/agent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -196,7 +197,7 @@ const AgentPerformanceDashboard = () => {
       <h2 className="text-2xl font-bold mb-6">Performances des Agents IA</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {agents.map((agent) => (
-          <AgentCard key={agent.id} agent={agent} />
+          <AgentPerformanceCard key={agent.id} agent={agent} />
         ))}
       </div>
     </div>
