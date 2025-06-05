@@ -5,6 +5,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTrainingLogs } from "@/hooks/useTrainingLogs";
 import TrainingLogsList from "@/components/TrainingLogsList";
 import TrainingSynthesis from "@/components/TrainingSynthesis";
+import EntrainementIA from "@/components/EntrainementIA";
+import BestRuns from "@/components/BestRuns";
+import ProgressionHebdo from "@/components/ProgressionHebdo";
+import ErreursRates from "@/components/ErreursRates";
+import ConfigurationAgent from "@/components/ConfigurationAgent";
 import { AlertCircle } from "lucide-react";
 
 export default function Dashboard() {
@@ -50,9 +55,11 @@ export default function Dashboard() {
       <h1 className="text-3xl font-bold mb-6">Dashboard IA Trading</h1>
       
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="trainings">Historique des Trainings</TabsTrigger>
+          <TabsTrigger value="components">Composants IA</TabsTrigger>
+          <TabsTrigger value="analysis">Analyse</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview" className="space-y-6">
@@ -61,6 +68,23 @@ export default function Dashboard() {
         
         <TabsContent value="trainings">
           <TrainingLogsList trainings={trainings || []} />
+        </TabsContent>
+
+        <TabsContent value="components" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <EntrainementIA />
+            <ConfigurationAgent trainings={trainings || []} />
+            <BestRuns trainings={trainings || []} />
+            <ErreursRates trainings={trainings || []} />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analysis" className="space-y-6">
+          <ProgressionHebdo />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <BestRuns trainings={trainings || []} />
+            <ErreursRates trainings={trainings || []} />
+          </div>
         </TabsContent>
       </Tabs>
     </div>
