@@ -1,6 +1,5 @@
 
 import MarketStats from "@/components/MarketStats";
-import PortfolioCard from "@/components/PortfolioCard";
 import TrainingResultsDashboard from "@/components/TrainingResultsDashboard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -33,7 +32,10 @@ const Index = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <div>
-            <PortfolioCard />
+            {/* Espace pour futures métriques IA */}
+            <div className="h-full flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25">
+              <p className="text-muted-foreground">Métriques IA avancées</p>
+            </div>
           </div>
           <div>
             {/* Espace pour futurs composants de trading IA */}
