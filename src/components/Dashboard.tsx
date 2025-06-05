@@ -17,12 +17,12 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="p-4">
-        <h1 className="text-3xl font-bold mb-6">Dashboard IA Trading</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="p-2 sm:p-4">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Dashboard IA Trading</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card key={i}>
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <Skeleton className="h-6 w-24 mb-2" />
                 <Skeleton className="h-8 w-16" />
                 <Skeleton className="h-4 w-20 mt-2" />
@@ -36,12 +36,12 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="p-4">
-        <h1 className="text-3xl font-bold mb-6">Dashboard IA Trading</h1>
+      <div className="p-2 sm:p-4">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Dashboard IA Trading</h1>
         <Card className="bg-destructive/20 border-destructive">
-          <CardContent className="p-6 flex items-center space-x-2">
-            <AlertCircle className="h-5 w-5 text-destructive" />
-            <p className="text-destructive-foreground">
+          <CardContent className="p-4 sm:p-6 flex items-start sm:items-center space-x-2">
+            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5 sm:mt-0" />
+            <p className="text-destructive-foreground text-sm sm:text-base">
               Erreur lors du chargement des données: {error.message}
             </p>
           </CardContent>
@@ -51,18 +51,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-3xl font-bold mb-6">Dashboard IA Trading</h1>
+    <div className="p-2 sm:p-4">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Dashboard IA Trading</h1>
       
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-          <TabsTrigger value="trainings">Historique des Trainings</TabsTrigger>
-          <TabsTrigger value="components">Composants IA</TabsTrigger>
-          <TabsTrigger value="analysis">Analyse</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="trainings" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Historique</TabsTrigger>
+          <TabsTrigger value="components" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Composants IA</TabsTrigger>
+          <TabsTrigger value="analysis" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Analyse</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-4 sm:space-y-6">
           <TrainingSynthesis trainings={trainings || []} />
         </TabsContent>
         
@@ -70,8 +70,8 @@ export default function Dashboard() {
           <TrainingLogsList trainings={trainings || []} />
         </TabsContent>
 
-        <TabsContent value="components" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <TabsContent value="components" className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <EntrainementIA />
             <ConfigurationAgent trainings={trainings || []} />
             <BestRuns trainings={trainings || []} />
@@ -79,9 +79,9 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="analysis" className="space-y-6">
+        <TabsContent value="analysis" className="space-y-4 sm:space-y-6">
           <ProgressionHebdo />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <BestRuns trainings={trainings || []} />
             <ErreursRates trainings={trainings || []} />
           </div>

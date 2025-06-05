@@ -20,17 +20,17 @@ export default function EntrainementIA() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+          <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
           Entraînement IA
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
+      <CardContent className="space-y-4 p-3 sm:p-6 pt-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Statut</p>
-            <Badge variant={isRunning ? "default" : "secondary"}>
+            <p className="text-xs sm:text-sm text-muted-foreground">Statut</p>
+            <Badge variant={isRunning ? "default" : "secondary"} className="mt-1">
               {isRunning ? "En cours..." : "Arrêté"}
             </Badge>
           </div>
@@ -39,9 +39,9 @@ export default function EntrainementIA() {
               onClick={handleStart} 
               disabled={isRunning}
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-1 sm:flex-none text-xs sm:text-sm"
             >
-              <Play className="h-4 w-4" />
+              <Play className="h-3 w-3 sm:h-4 sm:w-4" />
               Démarrer
             </Button>
             <Button 
@@ -49,20 +49,20 @@ export default function EntrainementIA() {
               disabled={!isRunning}
               variant="outline"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 flex-1 sm:flex-none text-xs sm:text-sm"
             >
-              <Square className="h-4 w-4" />
+              <Square className="h-3 w-3 sm:h-4 sm:w-4" />
               Arrêter
             </Button>
           </div>
         </div>
         
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span>Mode auto</span>
-            <Badge variant="outline">Activé</Badge>
+            <Badge variant="outline" className="text-xs">Activé</Badge>
           </div>
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span>Prochaine session</span>
             <span className="text-muted-foreground">Dans 2h</span>
           </div>

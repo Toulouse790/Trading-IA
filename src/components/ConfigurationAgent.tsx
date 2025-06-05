@@ -17,46 +17,46 @@ export default function ConfigurationAgent({ trainings }: ConfigurationAgentProp
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+          <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
           Configuration Agent
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-3 sm:p-6 pt-0">
         <div className="space-y-3">
           <div>
-            <p className="text-sm font-medium">Assistant Actuel</p>
-            <Badge variant="outline">
+            <p className="text-xs sm:text-sm font-medium">Assistant Actuel</p>
+            <Badge variant="outline" className="mt-1 text-xs max-w-full truncate block">
               {latestTraining?.assistant_id || "Non défini"}
             </Badge>
           </div>
           
           <div>
-            <p className="text-sm font-medium">Modèle IA</p>
-            <Badge variant="outline">
+            <p className="text-xs sm:text-sm font-medium">Modèle IA</p>
+            <Badge variant="outline" className="mt-1 text-xs">
               {latestTraining?.model_version || "gpt-4-turbo"}
             </Badge>
           </div>
           
           <div>
-            <p className="text-sm font-medium">Stratégie</p>
-            <Badge variant="outline">
+            <p className="text-xs sm:text-sm font-medium">Stratégie</p>
+            <Badge variant="outline" className="mt-1 text-xs">
               {latestTraining?.strategy_version || "MWD v2.0"}
             </Badge>
           </div>
         </div>
 
         <div className="border-t pt-3 space-y-2">
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span>Assistants utilisés</span>
             <span className="text-muted-foreground">{uniqueAssistants.length}</span>
           </div>
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span>Stratégies testées</span>
             <span className="text-muted-foreground">{uniqueStrategies.length}</span>
           </div>
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span>Modèles IA</span>
             <span className="text-muted-foreground">{uniqueModels.length}</span>
           </div>
