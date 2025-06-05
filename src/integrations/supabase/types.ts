@@ -9,54 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      Agent_messages: {
+      agent_messages: {
         Row: {
-          agent_id: string | null
-          confiance: number | null
+          agent_id: string
+          agent_name: string | null
           contenu: string | null
-          created_at: string
+          created_at: string | null
+          currency_pair: string | null
+          description: string | null
           etat: string | null
-          horodatage: string | null
-          id: number
-          role: string | null
+          id: string
           strategie: string | null
-          tag: string | null
           texte_de_balise: string | null
-          texte_de_stratégie: string | null
-          thread_id: string
-          type_message: string | null
         }
         Insert: {
-          agent_id?: string | null
-          confiance?: number | null
+          agent_id: string
+          agent_name?: string | null
           contenu?: string | null
-          created_at?: string
+          created_at?: string | null
+          currency_pair?: string | null
+          description?: string | null
           etat?: string | null
-          horodatage?: string | null
-          id?: number
-          role?: string | null
+          id?: string
           strategie?: string | null
-          tag?: string | null
           texte_de_balise?: string | null
-          texte_de_stratégie?: string | null
-          thread_id: string
-          type_message?: string | null
         }
         Update: {
-          agent_id?: string | null
-          confiance?: number | null
+          agent_id?: string
+          agent_name?: string | null
           contenu?: string | null
-          created_at?: string
+          created_at?: string | null
+          currency_pair?: string | null
+          description?: string | null
           etat?: string | null
-          horodatage?: string | null
-          id?: number
-          role?: string | null
+          id?: string
           strategie?: string | null
-          tag?: string | null
           texte_de_balise?: string | null
-          texte_de_stratégie?: string | null
-          thread_id?: string
-          type_message?: string | null
         }
         Relationships: []
       }
@@ -108,66 +96,297 @@ export type Database = {
         }
         Relationships: []
       }
-      bougies_eurusd_h1: {
+      agents: {
         Row: {
-          close: number | null
-          high: number | null
-          horodatage: string
-          low: number | null
-          open: number | null
+          agent_id: string
+          agent_name: string
+          created_at: string | null
+          currency_pair: string | null
+          description: string | null
+          id: string
+          status: string
+          strategy_details: Json | null
+          timeframe: string | null
+          updated_at: string | null
         }
         Insert: {
-          close?: number | null
-          high?: number | null
-          horodatage: string
-          low?: number | null
-          open?: number | null
+          agent_id: string
+          agent_name: string
+          created_at?: string | null
+          currency_pair?: string | null
+          description?: string | null
+          id?: string
+          status?: string
+          strategy_details?: Json | null
+          timeframe?: string | null
+          updated_at?: string | null
         }
         Update: {
-          close?: number | null
-          high?: number | null
-          horodatage?: string
-          low?: number | null
-          open?: number | null
+          agent_id?: string
+          agent_name?: string
+          created_at?: string | null
+          currency_pair?: string | null
+          description?: string | null
+          id?: string
+          status?: string
+          strategy_details?: Json | null
+          timeframe?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
-      historique_backtests_eurusd: {
+      candle_data: {
         Row: {
-          date: string | null
-          id: string
-          nb_trades: number | null
-          note_strategie: number | null
-          perte_max: number | null
-          rendement: number | null
-          taux_reussite: number | null
-          texte_recommandation: string | null
+          close: number
+          event_time: string
+          high: number
+          low: number
+          open: number
+          real_volume: number | null
+          spread: number | null
+          symbol: string
+          tick_volume: number | null
+          timeframe: string
         }
         Insert: {
-          date?: string | null
-          id?: string
-          nb_trades?: number | null
-          note_strategie?: number | null
-          perte_max?: number | null
-          rendement?: number | null
-          taux_reussite?: number | null
-          texte_recommandation?: string | null
+          close: number
+          event_time: string
+          high: number
+          low: number
+          open: number
+          real_volume?: number | null
+          spread?: number | null
+          symbol: string
+          tick_volume?: number | null
+          timeframe: string
         }
         Update: {
-          date?: string | null
+          close?: number
+          event_time?: string
+          high?: number
+          low?: number
+          open?: number
+          real_volume?: number | null
+          spread?: number | null
+          symbol?: string
+          tick_volume?: number | null
+          timeframe?: string
+        }
+        Relationships: []
+      }
+      eurusd_daily: {
+        Row: {
+          close: number
+          created_at: string | null
+          high: number
+          id: string
+          low: number
+          open: number
+          timestamp: string
+        }
+        Insert: {
+          close: number
+          created_at?: string | null
+          high: number
           id?: string
-          nb_trades?: number | null
-          note_strategie?: number | null
-          perte_max?: number | null
-          rendement?: number | null
-          taux_reussite?: number | null
-          texte_recommandation?: string | null
+          low: number
+          open: number
+          timestamp: string
+        }
+        Update: {
+          close?: number
+          created_at?: string | null
+          high?: number
+          id?: string
+          low?: number
+          open?: number
+          timestamp?: string
+        }
+        Relationships: []
+      }
+      eurusd_monthly: {
+        Row: {
+          close: number
+          created_at: string | null
+          high: number
+          id: string
+          low: number
+          open: number
+          timestamp: string
+        }
+        Insert: {
+          close: number
+          created_at?: string | null
+          high: number
+          id?: string
+          low: number
+          open: number
+          timestamp: string
+        }
+        Update: {
+          close?: number
+          created_at?: string | null
+          high?: number
+          id?: string
+          low?: number
+          open?: number
+          timestamp?: string
+        }
+        Relationships: []
+      }
+      eurusd_weekly: {
+        Row: {
+          close: number
+          created_at: string | null
+          high: number
+          id: string
+          low: number
+          open: number
+          timestamp: string
+        }
+        Insert: {
+          close: number
+          created_at?: string | null
+          high: number
+          id?: string
+          low: number
+          open: number
+          timestamp: string
+        }
+        Update: {
+          close?: number
+          created_at?: string | null
+          high?: number
+          id?: string
+          low?: number
+          open?: number
+          timestamp?: string
+        }
+        Relationships: []
+      }
+      training_logs: {
+        Row: {
+          assistant_id: string | null
+          average_profit_per_trade: number | null
+          avg_rr_ratio: number | null
+          best_pattern_name: string | null
+          best_pattern_profit: number | null
+          created_at: string | null
+          error_rate: number | null
+          file_id: string | null
+          id: string
+          improvement_rate: number | null
+          is_best_run: boolean | null
+          market_conditions: Json | null
+          max_consecutive_losses: number | null
+          max_consecutive_wins: number | null
+          model_version: string | null
+          notes: string | null
+          patterns_analyzed: number | null
+          profitable_patterns: number | null
+          sharpe_ratio: number | null
+          source_trigger: string | null
+          status: string | null
+          strategy_version: string | null
+          top_patterns: Json | null
+          total_trades_analyzed: number | null
+          training_date: string | null
+          training_duration_ms: number | null
+          training_examples: Json | null
+          training_level: string | null
+          training_session_id: string | null
+          updated_at: string | null
+          win_rate: number | null
+          worst_pattern_loss: number | null
+          worst_pattern_name: string | null
+        }
+        Insert: {
+          assistant_id?: string | null
+          average_profit_per_trade?: number | null
+          avg_rr_ratio?: number | null
+          best_pattern_name?: string | null
+          best_pattern_profit?: number | null
+          created_at?: string | null
+          error_rate?: number | null
+          file_id?: string | null
+          id?: string
+          improvement_rate?: number | null
+          is_best_run?: boolean | null
+          market_conditions?: Json | null
+          max_consecutive_losses?: number | null
+          max_consecutive_wins?: number | null
+          model_version?: string | null
+          notes?: string | null
+          patterns_analyzed?: number | null
+          profitable_patterns?: number | null
+          sharpe_ratio?: number | null
+          source_trigger?: string | null
+          status?: string | null
+          strategy_version?: string | null
+          top_patterns?: Json | null
+          total_trades_analyzed?: number | null
+          training_date?: string | null
+          training_duration_ms?: number | null
+          training_examples?: Json | null
+          training_level?: string | null
+          training_session_id?: string | null
+          updated_at?: string | null
+          win_rate?: number | null
+          worst_pattern_loss?: number | null
+          worst_pattern_name?: string | null
+        }
+        Update: {
+          assistant_id?: string | null
+          average_profit_per_trade?: number | null
+          avg_rr_ratio?: number | null
+          best_pattern_name?: string | null
+          best_pattern_profit?: number | null
+          created_at?: string | null
+          error_rate?: number | null
+          file_id?: string | null
+          id?: string
+          improvement_rate?: number | null
+          is_best_run?: boolean | null
+          market_conditions?: Json | null
+          max_consecutive_losses?: number | null
+          max_consecutive_wins?: number | null
+          model_version?: string | null
+          notes?: string | null
+          patterns_analyzed?: number | null
+          profitable_patterns?: number | null
+          sharpe_ratio?: number | null
+          source_trigger?: string | null
+          status?: string | null
+          strategy_version?: string | null
+          top_patterns?: Json | null
+          total_trades_analyzed?: number | null
+          training_date?: string | null
+          training_duration_ms?: number | null
+          training_examples?: Json | null
+          training_level?: string | null
+          training_session_id?: string | null
+          updated_at?: string | null
+          win_rate?: number | null
+          worst_pattern_loss?: number | null
+          worst_pattern_name?: string | null
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      training_stats_by_week: {
+        Row: {
+          assistant_id: string | null
+          avg_patterns_analyzed: number | null
+          avg_profitable_patterns: number | null
+          avg_win_rate: number | null
+          best_week_win_rate: number | null
+          total_runs: number | null
+          week: string | null
+          worst_week_win_rate: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
