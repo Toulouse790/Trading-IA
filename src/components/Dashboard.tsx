@@ -1,40 +1,14 @@
 
-import TrainingResultsDashboard from "@/components/TrainingResultsDashboard";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTrainingLogs } from "@/hooks/useTrainingLogs";
+import TrainingLogsList from "@/components/TrainingLogsList";
+import TrainingSynthesis from "@/components/TrainingSynthesis";
+import { AlertCircle } from "lucide-react";
 
 export default function Dashboard() {
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const { data: trainingData, error } = await supabase
-          .from("training_logs")
-          .select("*")
-          .order("training_date", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        
-        if (error) {
-          setError(error.message);
-        } else {
-          setData(trainingData);
-        }
-      } catch (err) {
-        setError("Erreur lors du chargement des données");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    fetchData();
-  }, []);
+  const { data: trainings, isLoading, error } = useTrainingLogs();
 
   if (isLoading) {
     return (
@@ -60,8 +34,11 @@ export default function Dashboard() {
       <div className="p-4">
         <h1 className="text-3xl font-bold mb-6">Dashboard IA Trading</h1>
         <Card className="bg-destructive/20 border-destructive">
-          <CardContent className="p-6">
-            <p className="text-destructive-foreground">Erreur: {error}</p>
+          <CardContent className="p-6 flex items-center space-x-2">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <p className="text-destructive-foreground">
+              Erreur lors du chargement des données: {error.message}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -71,7 +48,21 @@ export default function Dashboard() {
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-6">Dashboard IA Trading</h1>
-      <TrainingResultsDashboard data={data} />
+      
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="trainings">Historique des Trainings</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-6">
+          <TrainingSynthesis trainings={trainings || []} />
+        </TabsContent>
+        
+        <TabsContent value="trainings">
+          <TrainingLogsList trainings={trainings || []} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
