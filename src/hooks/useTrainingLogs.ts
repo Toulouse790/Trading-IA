@@ -20,6 +20,8 @@ export interface TrainingLog {
   market_conditions: any;
   notes: string;
   status: string;
+  is_best_run: boolean;
+  model_version: string;
 }
 
 export const useTrainingLogs = () => {
