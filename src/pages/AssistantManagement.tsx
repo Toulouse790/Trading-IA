@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useTrainingLogs } from "@/hooks/useTrainingLogs";
-import { Settings, Edit3, Save, X, Bot } from "lucide-react";
+import { Settings, Edit3, Save, X, Bot, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function AssistantManagement() {
   const { data: trainings } = useTrainingLogs();
@@ -53,7 +54,18 @@ export default function AssistantManagement() {
   return (
     <div className="min-h-screen bg-[#0F0F0E] p-2 sm:p-4">
       <div className="max-w-6xl mx-auto">
+        {/* Header avec bouton retour */}
         <div className="mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Link to="/">
+              <Button variant="outline" size="sm" className="flex items-center gap-2 bg-[#1F1F1E] border-[#3A3935] text-[#E6E4DD] hover:bg-[#3A3935] hover:text-[#FAFAF8]">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Retour au Dashboard</span>
+                <span className="sm:hidden">Retour</span>
+              </Button>
+            </Link>
+          </div>
+          
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#FAFAF8] mb-2">
             Gestion des Assistants
           </h1>
