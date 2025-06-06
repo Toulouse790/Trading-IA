@@ -2,6 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { useTrainingLogs } from "@/hooks/useTrainingLogs";
 import TrainingLogsList from "@/components/TrainingLogsList";
 import TrainingSynthesis from "@/components/TrainingSynthesis";
@@ -11,7 +12,8 @@ import ProgressionHebdo from "@/components/ProgressionHebdo";
 import ErreursRates from "@/components/ErreursRates";
 import ConfigurationAgent from "@/components/ConfigurationAgent";
 import SimpleDashboard from "@/components/SimpleDashboard";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { data: trainings, isLoading, error } = useTrainingLogs();
@@ -53,6 +55,17 @@ export default function Dashboard() {
 
   return (
     <div className="p-2 sm:p-4">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard IA Trading</h1>
+        <Link to="/assistants">
+          <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            <span className="hidden sm:inline">Gérer les Assistants</span>
+            <span className="sm:hidden">Assistants</span>
+          </Button>
+        </Link>
+      </div>
+      
       <Tabs defaultValue="simple" className="space-y-4 sm:space-y-6">
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto">
           <TabsTrigger value="simple" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Tableau Simple</TabsTrigger>
