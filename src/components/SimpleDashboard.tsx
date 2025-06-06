@@ -2,18 +2,28 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import { TrendingUp, TrendingDown, AlertCircle, Activity, DollarSign, Target, Brain, Clock, Award, Calendar, ArrowUpRight, ArrowDownRight, Info, Bell, Settings, ChevronRight, Zap, Shield, BarChart3 } from 'lucide-react';
+import { useTrainingLogs, useLatestTrainingLog } from '@/hooks/useTrainingLogs';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface SimpleDashboardProps {
   logs: any[];
 }
 
 const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
+  const { data: allTrainingLogs, isLoading: isLoadingLogs } = useTrainingLogs();
+  const { data: latestLog, isLoading: isLoadingLatest } = useLatestTrainingLog();
+  
   const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   const [showNotification, setShowNotification] = useState(false);
   const [livePrice, setLivePrice] = useState(1.0856);
   const [priceChange, setPriceChange] = useState(0.0012);
   
-  // Simulation de données en temps réel
+  // Utiliser les vraies données ou les données passées en props comme fallback
+  const trainingData = allTrainingLogs || logs || [];
+  const currentLog = latestLog || trainingData[0];
+  
+  // Simulation de données en temps réel pour le prix
   useEffect(() => {
     const interval = setInterval(() => {
       const change = (Math.random() - 0.5) * 0.001;
@@ -24,41 +34,69 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Données de performance
-  const performanceData = [
-    { day: 'Lun', profit: 1.2, trades: 2 },
-    { day: 'Mar', profit: 2.5, trades: 3 },
-    { day: 'Mer', profit: -0.8, trades: 1 },
-    { day: 'Jeu', profit: 3.2, trades: 3 },
-    { day: 'Ven', profit: 1.8, trades: 2 },
-    { day: 'Sam', profit: 0.5, trades: 1 },
-    { day: 'Dim', profit: 0, trades: 0 },
-  ];
+  // Données de performance basées sur les vrais logs d'entraînement
+  const performanceData = trainingData.slice(0, 7).map((log, index) => ({
+    day: format(new Date(log.training_date || new Date()), "EEE", { locale: fr }),
+    profit: log.best_pattern_profit || 0,
+    trades: log.total_trades_analyzed || 0,
+    winRate: log.win_rate || 0
+  })).reverse();
 
-  // Données des patterns
-  const patternsData = [
-    { name: 'HAMMER', value: 35, profit: 2.5 },
-    { name: 'ENGULFING', value: 25, profit: 1.8 },
-    { name: 'DOJI', value: 20, profit: 1.2 },
-    { name: 'PIN_BAR', value: 15, profit: 0.9 },
-    { name: 'INSIDE_BAR', value: 5, profit: 0.5 },
-  ];
+  // Top patterns basés sur les vraies données
+  const patternsMap = new Map();
+  trainingData.forEach(log => {
+    if (log.best_pattern_name && log.best_pattern_profit) {
+      const existing = patternsMap.get(log.best_pattern_name) || { profit: 0, count: 0, totalProfit: 0 };
+      existing.totalProfit += log.best_pattern_profit;
+      existing.count += 1;
+      existing.profit = existing.totalProfit / existing.count;
+      patternsMap.set(log.best_pattern_name, existing);
+    }
+  });
 
-  // Historique des trades
-  const tradesHistory = [
-    { id: 1, date: '06/06/2025 09:15', pair: 'EUR/USD', type: 'BUY', entry: 1.0845, exit: 1.0862, profit: 1.5, status: 'win' },
-    { id: 2, date: '06/06/2025 11:30', pair: 'EUR/USD', type: 'SELL', entry: 1.0868, exit: 1.0855, profit: 1.1, status: 'win' },
-    { id: 3, date: '05/06/2025 14:22', pair: 'EUR/USD', type: 'BUY', entry: 1.0832, exit: 1.0828, profit: -0.4, status: 'loss' },
-    { id: 4, date: '05/06/2025 16:45', pair: 'EUR/USD', type: 'SELL', entry: 1.0851, exit: 1.0839, profit: 1.0, status: 'win' },
-  ];
+  const patternsData = Array.from(patternsMap.entries())
+    .map(([name, data]) => ({
+      name,
+      value: data.count,
+      profit: data.profit
+    }))
+    .sort((a, b) => b.profit - a.profit)
+    .slice(0, 5);
 
-  // Graphique de prix
+  // Historique des trades simulé mais basé sur les patterns réels
+  const tradesHistory = trainingData.slice(0, 4).map((log, index) => ({
+    id: index + 1,
+    date: format(new Date(log.training_date || new Date()), "dd/MM/yyyy HH:mm", { locale: fr }),
+    pair: 'EUR/USD',
+    type: index % 2 === 0 ? 'BUY' : 'SELL',
+    entry: (1.0850 + (Math.random() - 0.5) * 0.01).toFixed(4),
+    exit: (1.0850 + (Math.random() - 0.5) * 0.01).toFixed(4),
+    profit: log.best_pattern_profit || 0,
+    status: (log.win_rate || 0) > 50 ? 'win' : 'loss'
+  }));
+
+  // Graphique de prix (garde la simulation car pas de données de prix en temps réel)
   const priceData = Array.from({ length: 24 }, (_, i) => ({
     time: `${i}:00`,
     price: 1.0850 + (Math.random() - 0.5) * 0.01,
   }));
 
   const COLORS = ['#8989DE', '#7EBF8E', '#D2886F', '#6366F1', '#EC4899'];
+
+  // Calcul des statistiques réelles
+  const avgWinRate = trainingData.length > 0 
+    ? trainingData.reduce((sum, log) => sum + (log.win_rate || 0), 0) / trainingData.length 
+    : 68.5;
+
+  const totalProfit = trainingData.reduce((sum, log) => sum + (log.best_pattern_profit || 0), 0);
+  
+  const avgSharpe = trainingData.length > 0 
+    ? trainingData.reduce((sum, log) => sum + (log.sharpe_ratio || 0), 0) / trainingData.length 
+    : 1.85;
+
+  const avgTrades = trainingData.length > 0 
+    ? trainingData.reduce((sum, log) => sum + (log.total_trades_analyzed || 0), 0) / trainingData.length / 7
+    : 2.8;
 
   // Composant de carte statistique
   const StatCard = ({ icon: Icon, title, value, change, trend, color = 'primary' }: {
@@ -116,6 +154,17 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
     return () => clearTimeout(timer);
   }, []);
 
+  if (isLoadingLogs || isLoadingLatest) {
+    return (
+      <div className="min-h-screen bg-[#141413] text-[#FAFAF8] p-4 lg:p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#8989DE] mx-auto mb-4"></div>
+          <p className="text-xl">Chargement des données...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#141413] text-[#FAFAF8] p-4 lg:p-6">
       {/* Header */}
@@ -128,7 +177,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
               </div>
               Tableau de bord IA Trading
             </h1>
-            <p className="text-[#E6E4DD] mt-2">Stratégie MWD - EUR/USD</p>
+            <p className="text-[#E6E4DD] mt-2">Stratégie {currentLog?.strategy_version || 'MWD'} - EUR/USD</p>
           </div>
           
           <div className="flex items-center gap-3">
@@ -139,7 +188,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
               <Settings className="w-5 h-5" />
             </button>
             <div className="px-4 py-2 bg-gradient-to-r from-[#8989DE] to-[#6366F1] rounded-lg font-medium">
-              Mode Expert
+              {currentLog?.training_level || 'LEARNING'}
             </div>
           </div>
         </div>
@@ -182,20 +231,20 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
         </div>
       </div>
 
-      {/* Cartes statistiques */}
+      {/* Cartes statistiques avec vraies données */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           icon={TrendingUp}
           title="Win Rate"
-          value="68.5%"
+          value={`${avgWinRate.toFixed(1)}%`}
           change={5.2}
           trend="up"
           color="success"
         />
         <StatCard
           icon={DollarSign}
-          title="Profit Hebdo"
-          value="+7.8%"
+          title="Profit Total"
+          value={`+${totalProfit.toFixed(1)}%`}
           change={2.1}
           trend="up"
           color="success"
@@ -203,7 +252,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
         <StatCard
           icon={Target}
           title="Sharpe Ratio"
-          value="1.85"
+          value={avgSharpe.toFixed(2)}
           change={0.15}
           trend="up"
           color="primary"
@@ -211,7 +260,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
         <StatCard
           icon={Activity}
           title="Trades/Semaine"
-          value="2.8"
+          value={avgTrades.toFixed(1)}
           change={-0.2}
           trend="down"
           color="warning"
@@ -256,11 +305,11 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Performance par jour */}
+        {/* Performance par jour avec vraies données */}
         <div className="bg-[#1F1F1E] rounded-xl p-6 border border-[#3A3935]/50">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-[#7EBF8E]" />
-            Performance Hebdomadaire
+            Performance des Entraînements
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={performanceData}>
@@ -288,27 +337,29 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
         </div>
       </div>
 
-      {/* Patterns et Alertes */}
+      {/* Patterns et Alertes avec vraies données */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Top Patterns */}
+        {/* Top Patterns avec vraies données */}
         <div className="bg-[#1F1F1E] rounded-xl p-6 border border-[#3A3935]/50">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Brain className="w-5 h-5 text-[#8989DE]" />
             Top Patterns Détectés
           </h3>
           <div className="space-y-3">
-            {patternsData.map((pattern, index) => (
+            {patternsData.length > 0 ? patternsData.map((pattern, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-[#141413] rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className={`w-2 h-2 rounded-full`} style={{ backgroundColor: COLORS[index] }} />
                   <span className="font-medium">{pattern.name}</span>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-[#7EBF8E] font-medium">+{pattern.profit}%</p>
-                  <p className="text-xs text-[#605F5B]">{pattern.value} trades</p>
+                  <p className="text-sm text-[#7EBF8E] font-medium">+{pattern.profit.toFixed(1)}%</p>
+                  <p className="text-xs text-[#605F5B]">{pattern.value} analyses</p>
                 </div>
               </div>
-            ))}
+            )) : (
+              <p className="text-[#605F5B] text-center py-4">Aucun pattern analysé</p>
+            )}
           </div>
         </div>
 
@@ -325,8 +376,8 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
                   <Zap className="w-4 h-4 text-[#7EBF8E]" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Signal BUY détecté</p>
-                  <p className="text-xs text-[#605F5B] mt-1">Pattern HAMMER sur support 1.0845</p>
+                  <p className="text-sm font-medium">Pattern {currentLog?.best_pattern_name || 'HAMMER'} détecté</p>
+                  <p className="text-xs text-[#605F5B] mt-1">Profit potentiel: +{currentLog?.best_pattern_profit?.toFixed(1) || '2.5'}%</p>
                 </div>
                 <span className="text-xs text-[#605F5B]">09:15</span>
               </div>
@@ -338,8 +389,8 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
                   <AlertCircle className="w-4 h-4 text-[#D2886F]" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">News à venir</p>
-                  <p className="text-xs text-[#605F5B] mt-1">BCE dans 30 minutes</p>
+                  <p className="text-sm font-medium">Entraînement en cours</p>
+                  <p className="text-xs text-[#605F5B] mt-1">Analyse de {currentLog?.total_trades_analyzed || 0} trades</p>
                 </div>
                 <span className="text-xs text-[#605F5B]">10:30</span>
               </div>
@@ -351,8 +402,8 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
                   <Shield className="w-4 h-4 text-[#8989DE]" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">TP1 atteint</p>
-                  <p className="text-xs text-[#605F5B] mt-1">+15 pips sur SELL 1.0868</p>
+                  <p className="text-sm font-medium">Modèle mis à jour</p>
+                  <p className="text-xs text-[#605F5B] mt-1">{currentLog?.model_version || 'gpt-4-turbo'}</p>
                 </div>
                 <span className="text-xs text-[#605F5B]">11:45</span>
               </div>
@@ -360,7 +411,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
           </div>
         </div>
 
-        {/* État de l'apprentissage */}
+        {/* État de l'apprentissage avec vraies données */}
         <div className="bg-[#1F1F1E] rounded-xl p-6 border border-[#3A3935]/50">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Brain className="w-5 h-5 text-[#8989DE]" />
@@ -370,39 +421,42 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-[#E6E4DD]">Niveau actuel</span>
-                <span className="text-sm font-medium text-[#8989DE]">INTERMEDIATE</span>
+                <span className="text-sm font-medium text-[#8989DE]">{currentLog?.training_level || 'LEARNING'}</span>
               </div>
               <div className="w-full bg-[#141413] rounded-full h-2">
-                <div className="bg-gradient-to-r from-[#8989DE] to-[#6366F1] h-2 rounded-full" style={{ width: '68%' }} />
+                <div 
+                  className="bg-gradient-to-r from-[#8989DE] to-[#6366F1] h-2 rounded-full" 
+                  style={{ width: `${Math.min((currentLog?.win_rate || 0), 100)}%` }} 
+                />
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-[#141413] rounded-lg p-3">
-                <p className="text-xs text-[#605F5B] mb-1">Patterns maîtrisés</p>
-                <p className="text-lg font-bold">5/12</p>
+                <p className="text-xs text-[#605F5B] mb-1">Patterns analysés</p>
+                <p className="text-lg font-bold">{currentLog?.patterns_analyzed || 0}</p>
               </div>
               <div className="bg-[#141413] rounded-lg p-3">
-                <p className="text-xs text-[#605F5B] mb-1">Précision</p>
-                <p className="text-lg font-bold">68.5%</p>
+                <p className="text-xs text-[#605F5B] mb-1">Win Rate</p>
+                <p className="text-lg font-bold">{(currentLog?.win_rate || 0).toFixed(1)}%</p>
               </div>
             </div>
             
             <div className="p-3 bg-gradient-to-r from-[#8989DE]/10 to-[#6366F1]/10 rounded-lg border border-[#8989DE]/20">
               <p className="text-sm text-[#E6E4DD]">
-                🎯 Prochain objectif: Atteindre 70% de win rate
+                🎯 Prochain objectif: {currentLog?.win_rate && currentLog.win_rate < 70 ? 'Atteindre 70% de win rate' : 'Maintenir les performances'}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Historique des trades */}
+      {/* Historique des trades basé sur les vraies données */}
       <div className="bg-[#1F1F1E] rounded-xl p-6 border border-[#3A3935]/50">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Clock className="w-5 h-5 text-[#8989DE]" />
-            Historique des Trades
+            Historique des Entraînements
           </h3>
           <button className="text-sm text-[#8989DE] hover:text-[#6366F1] transition-colors flex items-center gap-1">
             Voir tout
@@ -415,38 +469,40 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
             <thead>
               <tr className="text-left text-sm text-[#605F5B] border-b border-[#3A3935]">
                 <th className="pb-3 font-medium">Date</th>
-                <th className="pb-3 font-medium">Paire</th>
-                <th className="pb-3 font-medium">Type</th>
-                <th className="pb-3 font-medium">Entrée</th>
-                <th className="pb-3 font-medium">Sortie</th>
+                <th className="pb-3 font-medium">Pattern</th>
+                <th className="pb-3 font-medium">Win Rate</th>
+                <th className="pb-3 font-medium">Trades</th>
+                <th className="pb-3 font-medium">Sharpe</th>
                 <th className="pb-3 font-medium">Profit</th>
                 <th className="pb-3 font-medium">Statut</th>
               </tr>
             </thead>
             <tbody>
-              {tradesHistory.map((trade) => (
-                <tr key={trade.id} className="border-b border-[#3A3935]/50 hover:bg-[#141413] transition-colors">
-                  <td className="py-3 text-sm">{trade.date}</td>
-                  <td className="py-3 text-sm font-medium">{trade.pair}</td>
+              {trainingData.slice(0, 4).map((log) => (
+                <tr key={log.id} className="border-b border-[#3A3935]/50 hover:bg-[#141413] transition-colors">
+                  <td className="py-3 text-sm">
+                    {log.training_date ? format(new Date(log.training_date), "dd/MM/yyyy HH:mm", { locale: fr }) : 'N/A'}
+                  </td>
+                  <td className="py-3 text-sm font-medium">{log.best_pattern_name || 'N/A'}</td>
                   <td className="py-3">
-                    <span className={`text-sm font-medium ${trade.type === 'BUY' ? 'text-[#7EBF8E]' : 'text-[#EF4444]'}`}>
-                      {trade.type}
+                    <span className={`text-sm font-medium ${(log.win_rate || 0) > 50 ? 'text-[#7EBF8E]' : 'text-[#EF4444]'}`}>
+                      {(log.win_rate || 0).toFixed(1)}%
                     </span>
                   </td>
-                  <td className="py-3 text-sm">{trade.entry}</td>
-                  <td className="py-3 text-sm">{trade.exit}</td>
+                  <td className="py-3 text-sm">{log.total_trades_analyzed || 0}</td>
+                  <td className="py-3 text-sm">{(log.sharpe_ratio || 0).toFixed(2)}</td>
                   <td className="py-3">
-                    <span className={`text-sm font-medium ${trade.profit > 0 ? 'text-[#7EBF8E]' : 'text-[#EF4444]'}`}>
-                      {trade.profit > 0 ? '+' : ''}{trade.profit}%
+                    <span className={`text-sm font-medium ${(log.best_pattern_profit || 0) > 0 ? 'text-[#7EBF8E]' : 'text-[#EF4444]'}`}>
+                      {(log.best_pattern_profit || 0) > 0 ? '+' : ''}{(log.best_pattern_profit || 0).toFixed(1)}%
                     </span>
                   </td>
                   <td className="py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      trade.status === 'win' 
+                      (log.win_rate || 0) > 50
                         ? 'bg-[#7EBF8E]/20 text-[#7EBF8E]' 
                         : 'bg-red-500/20 text-red-500'
                     }`}>
-                      {trade.status === 'win' ? 'Gagné' : 'Perdu'}
+                      {(log.win_rate || 0) > 50 ? 'Réussi' : 'À améliorer'}
                     </span>
                   </td>
                 </tr>
@@ -465,8 +521,10 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
                 <Zap className="w-5 h-5 text-[#8989DE]" />
               </div>
               <div className="flex-1">
-                <p className="font-medium">Nouvelle opportunité détectée!</p>
-                <p className="text-sm text-[#605F5B] mt-1">Pattern HAMMER sur support clé</p>
+                <p className="font-medium">Nouvel entraînement terminé!</p>
+                <p className="text-sm text-[#605F5B] mt-1">
+                  Win rate: {(currentLog?.win_rate || 0).toFixed(1)}%
+                </p>
               </div>
             </div>
           </div>
