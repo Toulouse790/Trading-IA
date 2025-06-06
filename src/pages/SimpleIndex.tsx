@@ -23,7 +23,7 @@ export default function SimpleIndex() {
           console.error('Erreur Supabase :', error);
           setError(error.message);
         } else {
-          setLogs(data || []);
+          setLogs(data as TrainingLog[] || []);
           setError(null);
         }
       } catch (err) {

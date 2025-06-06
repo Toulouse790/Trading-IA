@@ -50,7 +50,7 @@ export default function SimpleDashboard({ logs }: SimpleDashboardProps) {
         </CardHeader>
         <CardContent>
           <ul className="list-disc list-inside">
-            {last.top_patterns && last.top_patterns.length > 0 ? 
+            {last.top_patterns && Array.isArray(last.top_patterns) && last.top_patterns.length > 0 ? 
               last.top_patterns.map((p: any, i: number) => (
                 <li key={i}>{p.name} - {p.avgProfit} avg profit</li>
               )) : 

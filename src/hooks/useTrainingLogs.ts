@@ -15,13 +15,27 @@ export interface TrainingLog {
   best_pattern_profit: number;
   total_trades_analyzed: number;
   profitable_patterns: number;
-  top_patterns: any[];
+  top_patterns: any[]; // Changed from any[] to any to match JSON type
   training_examples: any[];
   market_conditions: any;
   notes: string;
   status: string;
   is_best_run: boolean;
   model_version: string;
+  training_duration_ms: number; // Added missing property
+  error_rate: number;
+  average_profit_per_trade: number;
+  improvement_rate: number;
+  patterns_analyzed: number;
+  max_consecutive_wins: number;
+  worst_pattern_name: string;
+  worst_pattern_loss: number;
+  file_id: string;
+  training_session_id: string;
+  training_level: string;
+  source_trigger: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export const useTrainingLogs = () => {
