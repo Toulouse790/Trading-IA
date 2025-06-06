@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Target, Activity, BarChart3, Bell, Settings } from 'lucide-react';
 import { useTrainingLogs, useLatestTrainingLog } from '@/hooks/useTrainingLogs';
@@ -100,38 +99,38 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
 
   if (isLoadingLogs || isLoadingLatest) {
     return (
-      <div className="min-h-screen bg-[#141413] text-[#FAFAF8] p-4 lg:p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-[#141413] text-[#FAFAF8] p-2 sm:p-4 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#8989DE] mx-auto mb-4"></div>
-          <p className="text-xl">Chargement des données...</p>
+          <div className="animate-spin rounded-full h-16 w-16 sm:h-32 sm:w-32 border-b-2 border-[#8989DE] mx-auto mb-4"></div>
+          <p className="text-lg sm:text-xl">Chargement des données...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#141413] text-[#FAFAF8] p-4 lg:p-6">
+    <div className="min-h-screen bg-[#141413] text-[#FAFAF8] p-2 sm:p-4 lg:p-6">
       {/* Header */}
-      <header className="mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <header className="mb-4 sm:mb-6 lg:mb-8">
+        <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-3xl lg:text-4xl font-bold flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-[#8989DE] to-[#6366F1] rounded-xl">
-                <BarChart3 className="w-8 h-8" />
+            <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-[#8989DE] to-[#6366F1] rounded-lg sm:rounded-xl">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8" />
               </div>
-              Tableau de bord IA Trading
+              <span className="leading-tight">Tableau de bord IA Trading</span>
             </h1>
-            <p className="text-[#E6E4DD] mt-2">Stratégie {currentLog?.strategy_version || 'MWD'} - EUR/USD</p>
+            <p className="text-[#E6E4DD] mt-1 sm:mt-2 text-sm sm:text-base">Stratégie {currentLog?.strategy_version || 'MWD'} - EUR/USD</p>
           </div>
           
-          <div className="flex items-center gap-3">
-            <button className="p-3 rounded-lg bg-[#1F1F1E] hover:bg-[#3A3935] transition-colors">
-              <Bell className="w-5 h-5" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button className="p-2 sm:p-3 rounded-lg bg-[#1F1F1E] hover:bg-[#3A3935] transition-colors">
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <button className="p-3 rounded-lg bg-[#1F1F1E] hover:bg-[#3A3935] transition-colors">
-              <Settings className="w-5 h-5" />
+            <button className="p-2 sm:p-3 rounded-lg bg-[#1F1F1E] hover:bg-[#3A3935] transition-colors">
+              <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <div className="px-4 py-2 bg-gradient-to-r from-[#8989DE] to-[#6366F1] rounded-lg font-medium">
+            <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-[#8989DE] to-[#6366F1] rounded-lg font-medium text-sm sm:text-base">
               {currentLog?.training_level || 'LEARNING'}
             </div>
           </div>
@@ -147,7 +146,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
       />
 
       {/* Cartes statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
         <StatCard
           icon={TrendingUp}
           title="Win Rate"
