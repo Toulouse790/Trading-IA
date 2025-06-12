@@ -135,6 +135,54 @@ export type Database = {
         }
         Relationships: []
       }
+      best_runs: {
+        Row: {
+          assistant_id: string
+          best_pattern_name: string | null
+          best_pattern_profit: number | null
+          created_at: string | null
+          id: string
+          improvement_rate: number | null
+          run_id: string
+          sharpe_ratio: number | null
+          strategy_version: string | null
+          total_trades_analyzed: number | null
+          training_date: string
+          training_level: string | null
+          win_rate: number | null
+        }
+        Insert: {
+          assistant_id: string
+          best_pattern_name?: string | null
+          best_pattern_profit?: number | null
+          created_at?: string | null
+          id?: string
+          improvement_rate?: number | null
+          run_id: string
+          sharpe_ratio?: number | null
+          strategy_version?: string | null
+          total_trades_analyzed?: number | null
+          training_date?: string
+          training_level?: string | null
+          win_rate?: number | null
+        }
+        Update: {
+          assistant_id?: string
+          best_pattern_name?: string | null
+          best_pattern_profit?: number | null
+          created_at?: string | null
+          id?: string
+          improvement_rate?: number | null
+          run_id?: string
+          sharpe_ratio?: number | null
+          strategy_version?: string | null
+          total_trades_analyzed?: number | null
+          training_date?: string
+          training_level?: string | null
+          win_rate?: number | null
+        }
+        Relationships: []
+      }
       candle_data: {
         Row: {
           close: number
@@ -171,6 +219,45 @@ export type Database = {
           symbol?: string
           tick_volume?: number | null
           timeframe?: string
+        }
+        Relationships: []
+      }
+      economic_calendar: {
+        Row: {
+          actual: string | null
+          created_at: string | null
+          currency: string | null
+          date: string
+          event_name: string
+          forecast: string | null
+          id: number
+          impact: string | null
+          previous: string | null
+          time: string | null
+        }
+        Insert: {
+          actual?: string | null
+          created_at?: string | null
+          currency?: string | null
+          date: string
+          event_name: string
+          forecast?: string | null
+          id?: number
+          impact?: string | null
+          previous?: string | null
+          time?: string | null
+        }
+        Update: {
+          actual?: string | null
+          created_at?: string | null
+          currency?: string | null
+          date?: string
+          event_name?: string
+          forecast?: string | null
+          id?: number
+          impact?: string | null
+          previous?: string | null
+          time?: string | null
         }
         Relationships: []
       }
@@ -291,7 +378,6 @@ export type Database = {
           top_patterns: Json | null
           total_trades_analyzed: number | null
           training_date: string | null
-          training_duration_ms: number | null
           training_examples: Json | null
           training_level: string | null
           training_session_id: string | null
@@ -326,7 +412,6 @@ export type Database = {
           top_patterns?: Json | null
           total_trades_analyzed?: number | null
           training_date?: string | null
-          training_duration_ms?: number | null
           training_examples?: Json | null
           training_level?: string | null
           training_session_id?: string | null
@@ -361,7 +446,6 @@ export type Database = {
           top_patterns?: Json | null
           total_trades_analyzed?: number | null
           training_date?: string | null
-          training_duration_ms?: number | null
           training_examples?: Json | null
           training_level?: string | null
           training_session_id?: string | null
@@ -384,6 +468,30 @@ export type Database = {
           total_runs: number | null
           week: string | null
           worst_week_win_rate: number | null
+        }
+        Relationships: []
+      }
+      vw_eurusd_daily_sorted: {
+        Row: {
+          close: number | null
+          high: number | null
+          low: number | null
+          open: number | null
+          timestamp: string | null
+        }
+        Insert: {
+          close?: number | null
+          high?: number | null
+          low?: number | null
+          open?: number | null
+          timestamp?: string | null
+        }
+        Update: {
+          close?: number | null
+          high?: number | null
+          low?: number | null
+          open?: number | null
+          timestamp?: string | null
         }
         Relationships: []
       }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, DollarSign, Target, Activity, BarChart3, Bell, Settings } from 'lucide-react';
+import { TrendingUp, DollarSign, Target, Activity, BarChart3 } from 'lucide-react';
 import { useTrainingLogs, useLatestTrainingLog } from '@/hooks/useTrainingLogs';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -9,6 +9,7 @@ import { PerformanceCharts } from '@/components/dashboard/PerformanceCharts';
 import { PatternsAndAlerts } from '@/components/dashboard/PatternsAndAlerts';
 import { TrainingHistory } from '@/components/dashboard/TrainingHistory';
 import { NotificationToast } from '@/components/dashboard/NotificationToast';
+import { HeaderActions } from '@/components/dashboard/HeaderActions';
 
 interface SimpleDashboardProps {
   logs: any[];
@@ -124,12 +125,7 @@ const SimpleDashboard = ({ logs }: SimpleDashboardProps) => {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-3">
-            <button className="p-2 sm:p-3 rounded-lg bg-[#1F1F1E] hover:bg-[#3A3935] transition-colors">
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-            <button className="p-2 sm:p-3 rounded-lg bg-[#1F1F1E] hover:bg-[#3A3935] transition-colors">
-              <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            <HeaderActions currentLog={currentLog} />
             <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-[#8989DE] to-[#6366F1] rounded-lg font-medium text-sm sm:text-base">
               {currentLog?.training_level || 'LEARNING'}
             </div>
