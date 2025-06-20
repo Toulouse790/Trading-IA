@@ -468,6 +468,66 @@ export type Database = {
         }
         Relationships: []
       }
+      real_trade_analysis: {
+        Row: {
+          analysis_date: string | null
+          avg_duration_candles: number | null
+          avg_profit_tp30: number | null
+          avg_profit_tp40: number | null
+          avg_profit_tp50: number | null
+          created_at: string | null
+          currency_pair: string | null
+          drawdown_rate: number | null
+          id: string
+          reliability_score: number | null
+          sl_hit: number | null
+          strategy_name: string | null
+          tp30_hit: number | null
+          tp40_hit: number | null
+          tp50_hit: number | null
+          trades_analyzed: number | null
+          win_rate: number | null
+        }
+        Insert: {
+          analysis_date?: string | null
+          avg_duration_candles?: number | null
+          avg_profit_tp30?: number | null
+          avg_profit_tp40?: number | null
+          avg_profit_tp50?: number | null
+          created_at?: string | null
+          currency_pair?: string | null
+          drawdown_rate?: number | null
+          id?: string
+          reliability_score?: number | null
+          sl_hit?: number | null
+          strategy_name?: string | null
+          tp30_hit?: number | null
+          tp40_hit?: number | null
+          tp50_hit?: number | null
+          trades_analyzed?: number | null
+          win_rate?: number | null
+        }
+        Update: {
+          analysis_date?: string | null
+          avg_duration_candles?: number | null
+          avg_profit_tp30?: number | null
+          avg_profit_tp40?: number | null
+          avg_profit_tp50?: number | null
+          created_at?: string | null
+          currency_pair?: string | null
+          drawdown_rate?: number | null
+          id?: string
+          reliability_score?: number | null
+          sl_hit?: number | null
+          strategy_name?: string | null
+          tp30_hit?: number | null
+          tp40_hit?: number | null
+          tp50_hit?: number | null
+          trades_analyzed?: number | null
+          win_rate?: number | null
+        }
+        Relationships: []
+      }
       training_logs: {
         Row: {
           assistant_id: string | null

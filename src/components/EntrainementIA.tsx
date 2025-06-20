@@ -15,18 +15,25 @@ interface AgentStatus {
 }
 
 const fetchAgentStatus = async (): Promise<AgentStatus | null> => {
+  // Récupérer le dernier agent mis à jour, peu importe son statut
   const { data, error } = await supabase
     .from('agents')
     .select('id, agent_name, status, updated_at')
-    .eq('status', 'Actif')
     .order('updated_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    console.warn("Aucun agent actif trouvé ou erreur:", error);
+    console.warn("Erreur lors de la récupération de l'agent:", error);
     return null;
   }
+
+  if (!data) {
+    console.warn("Aucun agent trouvé dans la base de données");
+    return null;
+  }
+
+  console.log("Agent trouvé:", data);
 
   return {
     id: data.id,
@@ -64,12 +71,21 @@ export default function EntrainementIA() {
   };
 
   const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'Actif':
+    const statusLower = status?.toLowerCase();
+    switch (statusLower) {
+      case 'actif':
+      case 'active':
+      case 'en cours':
+      case 'running':
         return 'default';
-      case 'En apprentissage':
+      case 'en apprentissage':
+      case 'learning':
+      case 'training':
         return 'secondary';
-      case 'Inactif':
+      case 'inactif':
+      case 'inactive':
+      case 'arrêté':
+      case 'stopped':
         return 'destructive';
       default:
         return 'outline';
@@ -77,16 +93,35 @@ export default function EntrainementIA() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Actif':
+    const statusLower = status?.toLowerCase();
+    switch (statusLower) {
+      case 'actif':
+      case 'active':
+      case 'en cours':
+      case 'running':
         return 'text-green-600';
-      case 'En apprentissage':
+      case 'en apprentissage':
+      case 'learning':
+      case 'training':
         return 'text-blue-600';
-      case 'Inactif':
+      case 'inactif':
+      case 'inactive':
+      case 'arrêté':
+      case 'stopped':
         return 'text-red-600';
       default:
         return 'text-gray-600';
     }
+  };
+
+  const isInactiveStatus = (status: string) => {
+    const statusLower = status?.toLowerCase();
+    return ['inactif', 'inactive', 'arrêté', 'stopped'].includes(statusLower);
+  };
+
+  const isTrainingStatus = (status: string) => {
+    const statusLower = status?.toLowerCase();
+    return ['en apprentissage', 'learning', 'training'].includes(statusLower);
   };
 
   if (isLoading) {
@@ -118,8 +153,8 @@ export default function EntrainementIA() {
           <div className="flex items-center gap-2 p-3 bg-destructive/20 rounded-lg">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <div>
-              <p className="text-sm font-medium text-destructive">Aucun agent actif détecté</p>
-              <p className="text-xs text-destructive/80">Vérifiez la configuration de vos agents</p>
+              <p className="text-sm font-medium text-destructive">Aucun agent trouvé</p>
+              <p className="text-xs text-destructive/80">Vérifiez la configuration de la base de données</p>
             </div>
           </div>
         ) : (
@@ -131,7 +166,7 @@ export default function EntrainementIA() {
                   <Badge variant={getStatusVariant(agentStatus.status)} className="mt-1">
                     {agentStatus.status}
                   </Badge>
-                  {agentStatus.status === 'Inactif' && (
+                  {isInactiveStatus(agentStatus.status) && (
                     <AlertTriangle className="h-4 w-4 text-destructive" />
                   )}
                 </div>
@@ -139,7 +174,7 @@ export default function EntrainementIA() {
               <div className="flex gap-2">
                 <Button 
                   onClick={handleStart} 
-                  disabled={isStarting || agentStatus.status === 'En apprentissage'}
+                  disabled={isStarting || isTrainingStatus(agentStatus.status)}
                   size="sm"
                   className="flex items-center gap-2 flex-1 sm:flex-none text-xs sm:text-sm"
                 >
@@ -147,7 +182,7 @@ export default function EntrainementIA() {
                   {isStarting ? "Démarrage..." : "Démarrer"}
                 </Button>
                 <Button 
-                  disabled={agentStatus.status !== 'En apprentissage'}
+                  disabled={!isTrainingStatus(agentStatus.status)}
                   variant="outline"
                   size="sm"
                   className="flex items-center gap-2 flex-1 sm:flex-none text-xs sm:text-sm"
@@ -165,7 +200,7 @@ export default function EntrainementIA() {
                   {new Date(agentStatus.last_updated).toLocaleString('fr-FR')}
                 </span>
               </div>
-              {agentStatus.status === 'Inactif' && (
+              {isInactiveStatus(agentStatus.status) && (
                 <div className="p-2 bg-destructive/10 rounded text-xs text-destructive">
                   ⚠️ L'agent est à l'arrêt - vérifiez la configuration ou les logs d'erreur
                 </div>
