@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,6 +12,7 @@ import ErreursRates from "@/components/ErreursRates";
 import ConfigurationAgent from "@/components/ConfigurationAgent";
 import { AlertCircle, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
+import ConnectionDiagnostic from "@/components/ConnectionDiagnostic";
 
 export default function Dashboard() {
   const { data: trainings, isLoading, error } = useTrainingLogs();
@@ -64,6 +64,9 @@ export default function Dashboard() {
           </Button>
         </Link>
       </div>
+      
+      {/* Ajout du diagnostic de connexion */}
+      <ConnectionDiagnostic />
       
       <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">

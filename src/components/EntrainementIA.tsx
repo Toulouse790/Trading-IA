@@ -10,25 +10,36 @@ import { useToast } from "@/hooks/use-toast";
 export default function EntrainementIA() {
   const [agent, setAgent] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const fetchAgentStatus = async () => {
     try {
+      console.log('Récupération du statut de l\'agent...');
+      setConnectionError(null);
+      
       const { data, error } = await supabase
         .from('agents')
         .select('*')
         .order('updated_at', { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
 
       if (error) {
         console.error('Erreur lors de la récupération de l\'agent:', error);
+        setConnectionError(`Erreur DB: ${error.message}`);
         return;
       }
 
-      setAgent(data);
+      if (data && data.length > 0) {
+        console.log('Agent trouvé:', data[0]);
+        setAgent(data[0]);
+      } else {
+        console.log('Aucun agent trouvé dans la base de données');
+        setAgent(null);
+      }
     } catch (error) {
       console.error('Erreur de connexion:', error);
+      setConnectionError('Erreur de connexion à Supabase');
     }
   };
 
@@ -37,6 +48,7 @@ export default function EntrainementIA() {
     
     setIsLoading(true);
     try {
+      console.log('Démarrage de l\'agent:', agent.id);
       const { error } = await supabase
         .from('agents')
         .update({ 
@@ -79,6 +91,7 @@ export default function EntrainementIA() {
     
     setIsLoading(true);
     try {
+      console.log('Arrêt de l\'agent:', agent.id);
       const { error } = await supabase
         .from('agents')
         .update({ 
@@ -124,16 +137,23 @@ export default function EntrainementIA() {
       .channel('agents-changes')
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'agents' }, 
-        () => {
+        (payload) => {
+          console.log('Changement détecté dans agents:', payload);
           fetchAgentStatus();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Statut de souscription realtime:', status);
+      });
 
     // Vérifier la connexion toutes les 30 secondes
-    const interval = setInterval(fetchAgentStatus, 30000);
+    const interval = setInterval(() => {
+      console.log('Vérification périodique de la connexion...');
+      fetchAgentStatus();
+    }, 30000);
 
     return () => {
+      console.log('Nettoyage des souscriptions...');
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
@@ -161,6 +181,12 @@ export default function EntrainementIA() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 p-3 sm:p-6 pt-0">
+        {connectionError && (
+          <div className="bg-red-50 border border-red-200 rounded p-2 text-sm text-red-700">
+            ⚠️ {connectionError}
+          </div>
+        )}
+        
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-xs sm:text-sm text-muted-foreground">
