@@ -15,14 +15,14 @@ export interface TrainingLog {
   best_pattern_profit: number;
   total_trades_analyzed: number;
   profitable_patterns: number;
-  top_patterns: any[]; // Changed from any[] to any to match JSON type
+  top_patterns: any[];
   training_examples: any[];
   market_conditions: any;
   notes: string;
   status: string;
   is_best_run: boolean;
   model_version: string;
-  training_duration_ms: number; // Added missing property
+  training_duration_ms?: number; // Made optional since it's missing from DB
   error_rate: number;
   average_profit_per_trade: number;
   improvement_rate: number;
