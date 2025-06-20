@@ -20,40 +20,40 @@ export default function AIAgentPanel({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'learning':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-[#D2886F] bg-[#D2886F]/20 border border-[#D2886F]/30';
       case 'active':
-        return 'text-green-600 bg-green-100';
+        return 'text-[#7EBF8E] bg-[#7EBF8E]/20 border border-[#7EBF8E]/30';
       case 'paused':
-        return 'text-gray-600 bg-gray-100';
+        return 'text-[#605F5B] bg-[#605F5B]/20 border border-[#605F5B]/30';
       default:
-        return 'text-blue-600 bg-blue-100';
+        return 'text-[#8989DE] bg-[#8989DE]/20 border border-[#8989DE]/30';
     }
   };
 
   return (
-    <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+    <Card className="bg-gradient-to-r from-[#1F1F1E] to-[#2A2A29] border-[#3A3935]/50 hover:border-[#8989DE]/30 transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span className="text-lg font-bold text-gray-800">{name}</span>
+          <span className="text-lg font-bold text-[#FAFAF8]">{name}</span>
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
             {status}
           </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-sm text-gray-600">
-          <strong>Objectif:</strong> {objective}
+        <div className="text-sm text-[#E6E4DD]">
+          <strong className="text-[#FAFAF8]">Objectif:</strong> {objective}
         </div>
         
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <div className="text-xs text-gray-500 uppercase tracking-wide">Win Rate</div>
-            <div className="text-2xl font-bold text-green-600">{winRate.toFixed(1)}%</div>
+          <div className="bg-[#141413] rounded-lg p-3 border border-[#3A3935]/30 hover:border-[#7EBF8E]/30 transition-colors">
+            <div className="text-xs text-[#605F5B] uppercase tracking-wide">Win Rate</div>
+            <div className="text-2xl font-bold text-[#7EBF8E]">{winRate.toFixed(1)}%</div>
           </div>
           
-          <div className="bg-white rounded-lg p-3 shadow-sm">
-            <div className="text-xs text-gray-500 uppercase tracking-wide">Sharpe Ratio</div>
-            <div className="text-2xl font-bold text-blue-600">{sharpeRatio.toFixed(2)}</div>
+          <div className="bg-[#141413] rounded-lg p-3 border border-[#3A3935]/30 hover:border-[#8989DE]/30 transition-colors">
+            <div className="text-xs text-[#605F5B] uppercase tracking-wide">Sharpe Ratio</div>
+            <div className="text-2xl font-bold text-[#8989DE]">{sharpeRatio.toFixed(2)}</div>
           </div>
         </div>
       </CardContent>
