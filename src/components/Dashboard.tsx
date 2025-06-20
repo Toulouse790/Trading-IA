@@ -11,7 +11,6 @@ import BestRuns from "@/components/BestRuns";
 import ProgressionHebdo from "@/components/ProgressionHebdo";
 import ErreursRates from "@/components/ErreursRates";
 import ConfigurationAgent from "@/components/ConfigurationAgent";
-import SimpleDashboard from "@/components/SimpleDashboard";
 import { AlertCircle, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -66,18 +65,13 @@ export default function Dashboard() {
         </Link>
       </div>
       
-      <Tabs defaultValue="simple" className="space-y-4 sm:space-y-6">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto">
-          <TabsTrigger value="simple" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Tableau Simple</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
           <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="trainings" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Historique</TabsTrigger>
           <TabsTrigger value="components" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Composants IA</TabsTrigger>
           <TabsTrigger value="analysis" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Analyse</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="simple">
-          <SimpleDashboard logs={trainings || []} />
-        </TabsContent>
         
         <TabsContent value="overview" className="space-y-4 sm:space-y-6">
           <TrainingSynthesis trainings={trainings || []} />
