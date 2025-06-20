@@ -18,10 +18,10 @@ export default function ConnectionDiagnostic() {
     try {
       console.log('Testing Supabase connection...');
       
-      // Test de connexion simple
+      // Test de connexion simple avec une requête valide
       const { data, error } = await supabase
         .from('agents')
-        .select('count(*)')
+        .select('id')
         .limit(1);
 
       if (error) {
@@ -141,4 +141,37 @@ export default function ConnectionDiagnostic() {
       </CardContent>
     </Card>
   );
+
+  function getStatusIcon() {
+    switch (connectionStatus) {
+      case 'connected':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'disconnected':
+        return <WifiOff className="h-4 w-4 text-red-500" />;
+      default:
+        return <Wifi className="h-4 w-4 text-yellow-500" />;
+    }
+  }
+
+  function getStatusColor() {
+    switch (connectionStatus) {
+      case 'connected':
+        return 'bg-green-500 text-white';
+      case 'disconnected':
+        return 'bg-red-500 text-white';
+      default:
+        return 'bg-yellow-500 text-white';
+    }
+  }
+
+  function getStatusText() {
+    switch (connectionStatus) {
+      case 'connected':
+        return 'Connecté';
+      case 'disconnected':
+        return 'Déconnecté';
+      default:
+        return 'Vérification...';
+    }
+  }
 }
