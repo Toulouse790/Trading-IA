@@ -143,6 +143,7 @@ export type Database = {
           created_at: string | null
           id: string
           improvement_rate: number | null
+          is_best_run: boolean | null
           run_id: string
           sharpe_ratio: number | null
           strategy_version: string | null
@@ -158,6 +159,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           improvement_rate?: number | null
+          is_best_run?: boolean | null
           run_id: string
           sharpe_ratio?: number | null
           strategy_version?: string | null
@@ -173,6 +175,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           improvement_rate?: number | null
+          is_best_run?: boolean | null
           run_id?: string
           sharpe_ratio?: number | null
           strategy_version?: string | null
@@ -222,42 +225,81 @@ export type Database = {
         }
         Relationships: []
       }
-      economic_calendar: {
+      dxy_daily_data: {
         Row: {
-          actual: string | null
-          created_at: string | null
-          currency: string | null
-          date: string
-          event_name: string
-          forecast: string | null
-          id: number
-          impact: string | null
-          previous: string | null
-          time: string | null
+          close_price: number
+          created_at: string
+          high_price: number | null
+          id: string
+          low_price: number | null
+          open_price: number | null
+          trade_date: string
+          updated_at: string
+          volume: number | null
         }
         Insert: {
-          actual?: string | null
-          created_at?: string | null
-          currency?: string | null
-          date: string
-          event_name: string
-          forecast?: string | null
-          id?: number
-          impact?: string | null
-          previous?: string | null
-          time?: string | null
+          close_price: number
+          created_at?: string
+          high_price?: number | null
+          id?: string
+          low_price?: number | null
+          open_price?: number | null
+          trade_date: string
+          updated_at?: string
+          volume?: number | null
         }
         Update: {
-          actual?: string | null
-          created_at?: string | null
-          currency?: string | null
-          date?: string
+          close_price?: number
+          created_at?: string
+          high_price?: number | null
+          id?: string
+          low_price?: number | null
+          open_price?: number | null
+          trade_date?: string
+          updated_at?: string
+          volume?: number | null
+        }
+        Relationships: []
+      }
+      economic_calendar: {
+        Row: {
+          actual_value: number | null
+          created_at: string
+          currency_code: string
+          event_date: string
+          event_name: string
+          event_time: string | null
+          forecast_value: number | null
+          id: string
+          impact_level: string | null
+          previous_value: number | null
+          updated_at: string
+        }
+        Insert: {
+          actual_value?: number | null
+          created_at?: string
+          currency_code: string
+          event_date: string
+          event_name: string
+          event_time?: string | null
+          forecast_value?: number | null
+          id?: string
+          impact_level?: string | null
+          previous_value?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actual_value?: number | null
+          created_at?: string
+          currency_code?: string
+          event_date?: string
           event_name?: string
-          forecast?: string | null
-          id?: number
-          impact?: string | null
-          previous?: string | null
-          time?: string | null
+          event_time?: string | null
+          forecast_value?: number | null
+          id?: string
+          impact_level?: string | null
+          previous_value?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -351,6 +393,81 @@ export type Database = {
         }
         Relationships: []
       }
+      historical_trade_outcomes: {
+        Row: {
+          confluence_daily_ema_status: string | null
+          confluence_dxy_status: string | null
+          confluence_fibo_level: number | null
+          confluence_monthly_ema50_trend: string | null
+          confluence_round_price_status: string | null
+          confluence_weekly_sr_status: string | null
+          created_at: string
+          currency_pair: string
+          id: string
+          profit_pips_tp30: number | null
+          profit_pips_tp40: number | null
+          profit_pips_tp50: number | null
+          setup_date: string
+          setup_type: string | null
+          simulated_entry_price: number
+          simulated_stop_loss_price: number
+          simulated_trade_duration_candles: number | null
+          sl_hit: boolean | null
+          tp30_reached: boolean | null
+          tp40_reached: boolean | null
+          tp50_reached: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          confluence_daily_ema_status?: string | null
+          confluence_dxy_status?: string | null
+          confluence_fibo_level?: number | null
+          confluence_monthly_ema50_trend?: string | null
+          confluence_round_price_status?: string | null
+          confluence_weekly_sr_status?: string | null
+          created_at?: string
+          currency_pair: string
+          id?: string
+          profit_pips_tp30?: number | null
+          profit_pips_tp40?: number | null
+          profit_pips_tp50?: number | null
+          setup_date: string
+          setup_type?: string | null
+          simulated_entry_price: number
+          simulated_stop_loss_price: number
+          simulated_trade_duration_candles?: number | null
+          sl_hit?: boolean | null
+          tp30_reached?: boolean | null
+          tp40_reached?: boolean | null
+          tp50_reached?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          confluence_daily_ema_status?: string | null
+          confluence_dxy_status?: string | null
+          confluence_fibo_level?: number | null
+          confluence_monthly_ema50_trend?: string | null
+          confluence_round_price_status?: string | null
+          confluence_weekly_sr_status?: string | null
+          created_at?: string
+          currency_pair?: string
+          id?: string
+          profit_pips_tp30?: number | null
+          profit_pips_tp40?: number | null
+          profit_pips_tp50?: number | null
+          setup_date?: string
+          setup_type?: string | null
+          simulated_entry_price?: number
+          simulated_stop_loss_price?: number
+          simulated_trade_duration_candles?: number | null
+          sl_hit?: boolean | null
+          tp30_reached?: boolean | null
+          tp40_reached?: boolean | null
+          tp50_reached?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       training_logs: {
         Row: {
           assistant_id: string | null
@@ -371,6 +488,12 @@ export type Database = {
           notes: string | null
           patterns_analyzed: number | null
           profitable_patterns: number | null
+          proposed_entry_criteria: string | null
+          proposed_risk_rules: string | null
+          proposed_strategy_details: string | null
+          proposed_strategy_name: string | null
+          proposed_timeframe: string | null
+          proposed_tp_sl: string | null
           sharpe_ratio: number | null
           source_trigger: string | null
           status: string | null
@@ -405,6 +528,12 @@ export type Database = {
           notes?: string | null
           patterns_analyzed?: number | null
           profitable_patterns?: number | null
+          proposed_entry_criteria?: string | null
+          proposed_risk_rules?: string | null
+          proposed_strategy_details?: string | null
+          proposed_strategy_name?: string | null
+          proposed_timeframe?: string | null
+          proposed_tp_sl?: string | null
           sharpe_ratio?: number | null
           source_trigger?: string | null
           status?: string | null
@@ -439,6 +568,12 @@ export type Database = {
           notes?: string | null
           patterns_analyzed?: number | null
           profitable_patterns?: number | null
+          proposed_entry_criteria?: string | null
+          proposed_risk_rules?: string | null
+          proposed_strategy_details?: string | null
+          proposed_strategy_name?: string | null
+          proposed_timeframe?: string | null
+          proposed_tp_sl?: string | null
           sharpe_ratio?: number | null
           source_trigger?: string | null
           status?: string | null

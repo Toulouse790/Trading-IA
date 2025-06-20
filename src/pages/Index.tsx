@@ -1,6 +1,4 @@
 
-import MarketStats from "@/components/MarketStats";
-import TrainingResultsDashboard from "@/components/TrainingResultsDashboard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useLatestTrainingLog } from "@/hooks/useTrainingLogs";
@@ -23,22 +21,20 @@ const Index = () => {
           </Link>
         </header>
         
-        <MarketStats /> 
-
         <div className="mb-8 animate-fade-in">
           <h2 className="text-2xl font-bold mb-6">Derniers Résultats d'Entraînement</h2>
-          <TrainingResultsDashboard data={latestTraining} />
+          <div className="bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25 p-8">
+            <p className="text-muted-foreground text-center">Dashboard en cours de développement</p>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <div>
-            {/* Espace pour futures métriques IA */}
             <div className="h-full flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25">
               <p className="text-muted-foreground">Métriques IA avancées</p>
             </div>
           </div>
           <div>
-            {/* Espace pour futurs composants de trading IA */}
             <div className="h-full flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25">
               <p className="text-muted-foreground">Futures métriques IA</p>
             </div>
