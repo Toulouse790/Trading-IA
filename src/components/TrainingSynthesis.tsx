@@ -1,73 +1,90 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
-interface TrainingSummaryProps {
+type SynthesisData = {
+  executive_summary: string;
+  winning_patterns: string[];
+  losing_causes: string[];
+  strategy_improvements: string[];
+  filtering_rules: string[];
+  recommended_actions: string[];
   level: string;
-  winRate: number;
-  summary: string;
-  improvements: string[];
-  filters: string[];
-  actions: string[];
-  continuousLearning: string;
-}
-
-const TrainingSynthesis: React.FC<TrainingSummaryProps> = ({
-  level,
-  winRate,
-  summary,
-  improvements,
-  filters,
-  actions,
-  continuousLearning,
-}) => {
-  return (
-    <Card className="w-full mb-4">
-      <CardContent className="space-y-4 p-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">📊 Synthèse d'entraînement IA</h2>
-          <Badge variant="outline" className="text-sm uppercase">
-            Niveau : {level}
-          </Badge>
-        </div>
-
-        <p className="text-sm text-muted-foreground italic">
-          Taux de réussite observé : {winRate}%
-        </p>
-
-        <p className="text-base">🧠 <strong>Résumé :</strong> {summary}</p>
-
-        <div>
-          <h3 className="font-semibold">🔧 Améliorations proposées :</h3>
-          <ul className="list-disc list-inside">
-            {improvements.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="font-semibold">🛡️ Règles de filtrage :</h3>
-          <ul className="list-disc list-inside">
-            {filters.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="font-semibold">📌 Actions recommandées :</h3>
-          <ul className="list-disc list-inside">
-            {actions.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="text-sm mt-4">📚 <strong>Formation continue :</strong> {continuousLearning}</p>
-      </CardContent>
-    </Card>
-  );
+  continuous_learning: string;
 };
 
-export default TrainingSynthesis;
+type Props = {
+  response: SynthesisData | null;
+};
+
+export default function TrainingSynthesis({ response }: Props) {
+  if (!response) return <div>⏳ Chargement des données IA...</div>;
+
+  return (
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4">📊 Résumé de l'Entraînement</h2>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">🎯 Executive Summary</h3>
+        <p className="text-gray-700 mt-2 whitespace-pre-wrap">
+          {response.executive_summary}
+        </p>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">📈 Patterns Gagnants</h3>
+        <ul className="list-disc list-inside">
+          {response.winning_patterns?.map((item, i) => (
+            <li key={i} className="mb-2">📈 {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">❌ Causes des Pertes</h3>
+        <ul className="list-disc list-inside">
+          {response.losing_causes?.map((item, i) => (
+            <li key={i} className="mb-2">❌ {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">🧠 Améliorations Stratégiques</h3>
+        <ul className="list-disc list-inside">
+          {response.strategy_improvements?.map((item, i) => (
+            <li key={i} className="mb-2">✅ {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">🛑 Règles de Filtrage</h3>
+        <ul className="list-disc list-inside">
+          {response.filtering_rules?.map((item, i) => (
+            <li key={i} className="mb-2">🛑 {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">🚀 Actions Recommandées</h3>
+        <ul className="list-disc list-inside">
+          {response.recommended_actions?.map((item, i) => (
+            <li key={i} className="mb-2">🚀 {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">📈 Niveau Actuel</h3>
+        <p className="text-blue-600 font-semibold">{response.level}</p>
+      </div>
+
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold">📚 Apprentissage Continu</h3>
+        <p className="text-gray-700 whitespace-pre-wrap">
+          {response.continuous_learning}
+        </p>
+      </div>
+    </div>
+  );
+}
