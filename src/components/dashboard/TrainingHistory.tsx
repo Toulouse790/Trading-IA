@@ -50,14 +50,14 @@ export const TrainingHistory = ({ trainingData }: TrainingHistoryProps) => {
               <td className="py-2 sm:py-3 text-xs sm:text-sm font-medium text-[#FAFAF8]">{log.best_pattern_name || 'N/A'}</td>
               <td className="py-2 sm:py-3">
                 <span className={`text-xs sm:text-sm font-medium ${(log.win_rate || 0) > 50 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
-                  {(log.win_rate || 0).toFixed(1)}%
+                  {log.win_rate ? log.win_rate.toFixed(1) : '0.0'}%
                 </span>
               </td>
               <td className="py-2 sm:py-3 text-xs sm:text-sm text-[#FAFAF8]">{log.total_trades_analyzed || 0}</td>
-              <td className="py-2 sm:py-3 text-xs sm:text-sm text-[#FAFAF8]">{(log.sharpe_ratio || 0).toFixed(2)}</td>
+              <td className="py-2 sm:py-3 text-xs sm:text-sm text-[#FAFAF8]">{log.sharpe_ratio ? log.sharpe_ratio.toFixed(2) : '0.00'}</td>
               <td className="py-2 sm:py-3">
                 <span className={`text-xs sm:text-sm font-medium ${(log.best_pattern_profit || 0) > 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
-                  {(log.best_pattern_profit || 0) > 0 ? '+' : ''}{(log.best_pattern_profit || 0).toFixed(1)}%
+                  {(log.best_pattern_profit || 0) > 0 ? '+' : ''}{log.best_pattern_profit ? log.best_pattern_profit.toFixed(1) : '0.0'}%
                 </span>
               </td>
               <td className="py-2 sm:py-3">

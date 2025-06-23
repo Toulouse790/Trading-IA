@@ -13,7 +13,7 @@ interface BestRunsProps {
 
 export default function BestRuns({ trainings }: BestRunsProps) {
   const bestRuns = trainings
-    .filter(t => t.is_best_run || t.win_rate >= 70)
+    .filter(t => t.is_best_run || (t.win_rate && t.win_rate >= 70))
     .slice(0, 5);
 
   return (
@@ -51,14 +51,14 @@ export default function BestRuns({ trainings }: BestRunsProps) {
                     </TableCell>
                     <TableCell className="p-2 sm:p-4">
                       <Badge variant="default" className="bg-green-500 text-xs">
-                        {run.win_rate?.toFixed(1)}%
+                        {run.win_rate ? run.win_rate.toFixed(1) : "0.0"}%
                       </Badge>
                     </TableCell>
                     <TableCell className="p-2 sm:p-4 text-xs max-w-[120px] truncate hidden sm:table-cell">
                       {run.best_pattern_name || "N/A"}
                     </TableCell>
                     <TableCell className="p-2 sm:p-4 text-xs sm:text-sm">
-                      {run.sharpe_ratio?.toFixed(2) || "N/A"}
+                      {run.sharpe_ratio ? run.sharpe_ratio.toFixed(2) : "N/A"}
                     </TableCell>
                   </TableRow>
                 ))}

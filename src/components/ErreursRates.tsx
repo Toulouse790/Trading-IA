@@ -13,7 +13,7 @@ interface ErreursRatesProps {
 
 export default function ErreursRates({ trainings }: ErreursRatesProps) {
   const failedRuns = trainings
-    .filter(t => t.win_rate < 60 || t.status === "error")
+    .filter(t => (t.win_rate && t.win_rate < 60) || t.status === "error")
     .slice(0, 5);
 
   const errorRate = trainings.length > 0 
@@ -62,7 +62,7 @@ export default function ErreursRates({ trainings }: ErreursRatesProps) {
                     </TableCell>
                     <TableCell className="p-2">
                       <Badge variant="destructive" className="text-xs">
-                        {run.win_rate?.toFixed(1)}%
+                        {run.win_rate ? run.win_rate.toFixed(1) : "0.0"}%
                       </Badge>
                     </TableCell>
                     <TableCell className="p-2 hidden sm:table-cell">

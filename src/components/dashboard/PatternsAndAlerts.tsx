@@ -26,8 +26,8 @@ export const PatternsAndAlerts = ({ patternsData, currentLog }: PatternsAndAlert
                 <span className="font-medium text-sm sm:text-base truncate text-[#FAFAF8]">{pattern.name}</span>
               </div>
               <div className="text-right flex-shrink-0 ml-2">
-                <p className="text-xs sm:text-sm text-[#10B981] font-medium">+{pattern.profit.toFixed(1)}%</p>
-                <p className="text-xs text-[#9CA3AF]">{pattern.value} analyses</p>
+                <p className="text-xs sm:text-sm text-[#10B981] font-medium">+{pattern.profit ? pattern.profit.toFixed(1) : '0.0'}%</p>
+                <p className="text-xs text-[#9CA3AF]">{pattern.value || 0} analyses</p>
               </div>
             </div>
           )) : (
@@ -50,7 +50,7 @@ export const PatternsAndAlerts = ({ patternsData, currentLog }: PatternsAndAlert
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-medium truncate text-[#FAFAF8]">Pattern {currentLog?.best_pattern_name || 'HAMMER'} détecté</p>
-                <p className="text-xs text-[#9CA3AF] mt-1">Profit potentiel: +{currentLog?.best_pattern_profit?.toFixed(1) || '2.5'}%</p>
+                <p className="text-xs text-[#9CA3AF] mt-1">Profit potentiel: +{currentLog?.best_pattern_profit ? currentLog.best_pattern_profit.toFixed(1) : '2.5'}%</p>
               </div>
               <span className="text-xs text-[#9CA3AF] flex-shrink-0">09:15</span>
             </div>
@@ -111,7 +111,7 @@ export const PatternsAndAlerts = ({ patternsData, currentLog }: PatternsAndAlert
             </div>
             <div className="bg-[#141413] rounded-lg p-2 sm:p-3 border border-[#3A3935]/30">
               <p className="text-xs text-[#9CA3AF] mb-1">Win Rate</p>
-              <p className="text-sm sm:text-base lg:text-lg font-bold text-[#10B981]">{(currentLog?.win_rate || 0).toFixed(1)}%</p>
+              <p className="text-sm sm:text-base lg:text-lg font-bold text-[#10B981]">{currentLog?.win_rate ? currentLog.win_rate.toFixed(1) : '0.0'}%</p>
             </div>
           </div>
           
