@@ -10,7 +10,10 @@ import BestRuns from "@/components/BestRuns";
 import { useTrainingLogs } from "@/hooks/useTrainingLogs";
 
 export default function DashboardIA() {
-  const { data: trainingLogs = [] } = useTrainingLogs();
+  const { data: trainingLogs, isLoading, error } = useTrainingLogs();
+
+  // Ensure trainingLogs is always an array
+  const safeTrainingLogs = Array.isArray(trainingLogs) ? trainingLogs : [];
 
   // Simulé : données de logs IA (à remplacer par un fetch réel depuis Supabase)
   const trainingLogsSimulated = [
@@ -18,6 +21,42 @@ export default function DashboardIA() {
     { date: "2025-06-19", winRate: 72.4, sharpe: 1.31, pattern: "Double Bottom" },
     { date: "2025-06-20", winRate: 74.8, sharpe: 1.44, pattern: "EMA Rebound" },
   ];
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-8"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
+              Erreur de chargement
+            </h2>
+            <p className="text-red-600 dark:text-red-300">
+              Une erreur s'est produite lors du chargement des données.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 space-y-6">
@@ -50,7 +89,7 @@ export default function DashboardIA() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AlertsPanel />
-          <BestRuns trainings={trainingLogs} />
+          <BestRuns trainings={safeTrainingLogs} />
         </div>
 
         <EquityChart />
