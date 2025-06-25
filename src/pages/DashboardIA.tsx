@@ -5,7 +5,7 @@ import AlertsPanel from "@/components/AlertsPanel";
 import TradingStatus from "@/components/TradingStatus";
 import BestRuns from "@/components/BestRuns";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import AgentPerformanceDashboard from "@/components/AgentPerformanceDashboard"; // <-- ASSUREZ-VOUS QUE CE FICHIER EST BIEN PRÉSENT
+import AgentPerformanceDashboard from "@/components/AgentPerformanceDashboard"; // Importation du composant essentiel pour les multiples agents
 import { useTrainingLogs } from "@/hooks/useTrainingLogs";
 import { useSafeData } from "@/hooks/useSafeData";
 
@@ -68,8 +68,8 @@ export default function DashboardIA() {
         <ErrorBoundary>
           <MetricsOverview />
         </ErrorBoundary>
-
-        {/* Utilisé AgentPerformanceDashboard pour une vue multi-agents équilibrée */}
+        
+        {/* Affichage des performances de tous les agents */}
         <ErrorBoundary>
             <AgentPerformanceDashboard />
         </ErrorBoundary>
@@ -91,8 +91,7 @@ export default function DashboardIA() {
           <EquityChart />
         </ErrorBoundary>
 
-        {/* Ces composants sont explicitement retirés pour alléger la synthèse */}
-        {/* AIAgentPanel, TrainingHistory, TrainingLogsList ont été retirés */}
+        {/* Composants explicitement retirés pour alléger la synthèse : AIAgentPanel, TrainingHistory, TrainingLogsList */}
       </div>
     </div>
   );
