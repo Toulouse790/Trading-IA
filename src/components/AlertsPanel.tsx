@@ -21,22 +21,17 @@ interface TradingAlert {
 }
 
 export default function AlertsPanel() {
-  // Récupérer les alertes en utilisant une requête SQL directe pour éviter les problèmes de types
+  // Récupérer les alertes directement depuis la table trading_alerts
   const { data: alerts, isLoading, refetch } = useQuery({
     queryKey: ['tradingAlerts'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .rpc('get_unresolved_alerts', {})
-          .catch(async () => {
-            // Fallback: utiliser une requête directe si la fonction n'existe pas
-            return await supabase
-              .from('trading_alerts' as any)
-              .select('*')
-              .eq('resolved', false)
-              .order('created_at', { ascending: false })
-              .limit(20);
-          });
+          .from('trading_alerts')
+          .select('*')
+          .eq('resolved', false)
+          .order('created_at', { ascending: false })
+          .limit(20);
         
         if (error) {
           console.error('Erreur lors de la récupération des alertes:', error);
@@ -117,7 +112,7 @@ export default function AlertsPanel() {
   const resolveAlert = async (alertId: string) => {
     try {
       const { error } = await supabase
-        .from('trading_alerts' as any)
+        .from('trading_alerts')
         .update({ resolved: true, resolved_at: new Date().toISOString() })
         .eq('id', alertId);
       
