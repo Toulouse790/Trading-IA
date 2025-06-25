@@ -3,6 +3,7 @@ import React from "react";
 import AIAgentPanel from "@/components/AIAgentPanel";
 import MetricsOverview from "@/components/MetricsOverview";
 import EquityChart from "@/components/EquityChart";
+import AlertsPanel from "@/components/AlertsPanel";
 
 export default function DashboardIA() {
   // Simulé : données de logs IA (à remplacer par un fetch réel depuis Supabase)
@@ -16,13 +17,17 @@ export default function DashboardIA() {
     <div className="p-6 space-y-6">
       <MetricsOverview />
       
-      <AIAgentPanel
-        name="Expert EUR/USD – MWD Strategy"
-        objective="+6 % hebdo"
-        status="LEARNING"
-        winRate={74.8}
-        sharpeRatio={1.44}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AIAgentPanel
+          name="Expert EUR/USD – MWD Strategy"
+          objective="+6 % hebdo"
+          status="LEARNING"
+          winRate={74.8}
+          sharpeRatio={1.44}
+        />
+        
+        <AlertsPanel />
+      </div>
 
       <EquityChart />
 
