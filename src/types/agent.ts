@@ -4,7 +4,8 @@ export interface EquityDataPoint {
 }
 
 export interface Agent {
-  id: string;
+  id: string; // Ceci est l'ID de la ligne dans la table agent_metrics
+  agent_id: string; // <-- NOUVEAU : C'est l'ID unique de l'agent dans votre système
   agent_name: string;
   currency_pair: string;
   timeframe: string;
