@@ -2,15 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importation de Google Fonts (exemple avec Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @layer base {
+  :root {
+    --background: 220 10% 10%; /* Gris très foncé */
+    --foreground: 220 10% 90%; /* Blanc cassé */
+    --card: 220 10% 15%; /* Gris foncé pour les cartes */
+    --card-foreground: 220 10% 90%;
+    --popover: 220 10% 15%;
+    --popover-foreground: 220 10% 90%;
+    --primary: 210 90% 55%; /* Bleu vif pour les éléments primaires */
+    --primary-foreground: 220 10% 98%;
+    --secondary: 220 10% 20%; /* Gris moyen pour les éléments secondaires */
+    --secondary-foreground: 220 10% 90%;
+    --muted: 220 10% 30%; /* Gris plus clair pour le texte muted */
+    --muted-foreground: 220 10% 60%;
+    --accent: 210 90% 65%; /* Bleu légèrement plus clair pour les accents */
+    --accent-foreground: 220 10% 98%;
+    --destructive: 0 80% 50%; /* Rouge standard */
+    --destructive-foreground: 220 10% 98%;
+    --border: 220 10% 25%; /* Bordures */
+    --input: 220 10% 20%; /* Champs de saisie */
+    --ring: 210 90% 55%; /* Anneaux de focus */
+    --radius: 0.5rem; /* Rayon de bordure par défaut */
+  }
+
+  /* Si vous avez un mode light, vous pouvez le définir ici */
+  .dark {
+    /* Les valeurs sont déjà optimisées pour un thème sombre */
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
+    /* Appliquer la police Inter à tout le corps */
+    font-family: 'Inter', sans-serif;
   }
-}
 
-.glass-card {
-  /* bg-opacity-20 a été supprimé pour améliorer le contraste */
-  @apply bg-secondary backdrop-blur-lg border border-white border-opacity-10 shadow-lg;
+  /* Ajustement de la glass-card pour utiliser les nouvelles couleurs */
+  .glass-card {
+    @apply bg-card border-border shadow-lg; /* Utilise les nouvelles variables */
+    /* backdrop-filter reste pour l'effet de flou si vous le souhaitez */
+    backdrop-filter: blur(10px); 
+    /* Vous pouvez ajuster l'opacité ici si vous voulez un effet verre plus prononcé,
+       par exemple bg-opacity-70, mais bg-card est déjà une couleur solide. */
+  }
 }
 
 .crypto-chart {
