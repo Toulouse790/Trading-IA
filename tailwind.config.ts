@@ -1,12 +1,11 @@
-import type { Config } from "tailwindcss";
-
-export default {
+/** @type {import('tailwindcss').Config} */
+const config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   prefix: "",
   theme: {
@@ -19,56 +18,73 @@ export default {
     },
     extend: {
       colors: {
+        // Nouvelle palette de couleurs pour une esthétique améliorée
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#141413",
-        foreground: "#FAFAF8",
+        
+        // Couleurs de base (plus sombres pour le mode sombre)
+        background: "hsl(var(--background))", // Arrière-plan principal (très sombre)
+        foreground: "hsl(var(--foreground))", // Texte principal (blanc cassé)
+
+        // Primaire (pour les éléments importants, ex: boutons d'action)
         primary: {
-          DEFAULT: "#8989DE",
-          foreground: "#FAFAF8",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
+        // Secondaire (pour les cartes, sections, arrière-plans de composants)
         secondary: {
-          DEFAULT: "#3A3935",
-          foreground: "#FAFAF8",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
-        success: {
-          DEFAULT: "#7EBF8E",
-          foreground: "#FAFAF8",
+        // Destructive (pour les actions dangereuses ou messages d'erreur)
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
-        warning: {
-          DEFAULT: "#D2886F",
-          foreground: "#FAFAF8",
-        },
+        // Muted (pour le texte secondaire, icônes désactivées)
         muted: {
-          DEFAULT: "#605F5B",
-          foreground: "#E6E4DD",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
+        // Accent (pour les éléments interactifs, hover, focus)
         accent: {
-          DEFAULT: "#8989DE",
-          foreground: "#FAFAF8",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        // Popover (pour les popovers, tooltips)
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        // Card (pour les cartes, comme vos glass-card)
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       borderRadius: {
-        lg: "1rem",
-        md: "0.75rem",
-        sm: "0.5rem",
-      },
-      animation: {
-        "fade-in": "fade-in 0.5s ease-out",
-        "slide-up": "slide-up 0.5s ease-out",
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
-        "slide-up": {
-          "0%": { transform: "translateY(10px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
+
+export default config;
