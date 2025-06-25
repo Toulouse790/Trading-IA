@@ -6,7 +6,6 @@ import AlertsPanel from "@/components/AlertsPanel";
 import TradingStatus from "@/components/TradingStatus";
 import BestRuns from "@/components/BestRuns";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import AgentPerformanceDashboard from "@/components/AgentPerformanceDashboard";
 
 export default function DashboardIA() {
   return (
@@ -24,10 +23,6 @@ export default function DashboardIA() {
 
         <ErrorBoundary>
           <MetricsOverview />
-        </ErrorBoundary>
-        
-        <ErrorBoundary>
-            <AgentPerformanceDashboard />
         </ErrorBoundary>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
