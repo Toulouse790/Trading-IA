@@ -113,14 +113,14 @@ export default function TradingStatus() {
 
   if (isLoading || !status) {
     return (
-      <Card className="glass-card">
+      <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
         <CardHeader>
-          <CardTitle>Statut Trading</CardTitle>
+          <CardTitle className="text-gray-900 dark:text-white">Statut Trading</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded" />
-            <div className="h-20 bg-muted rounded" />
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded" />
           </div>
         </CardContent>
       </Card>
@@ -130,16 +130,16 @@ export default function TradingStatus() {
   const tradingProgress = (status.daily_trades / status.daily_limit) * 100;
 
   return (
-    <Card className="glass-card">
+    <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
             <ActivityIcon className="h-5 w-5" />
             Statut Trading
           </CardTitle>
           <div className="flex items-center gap-2">
             <div className={`h-2 w-2 rounded-full ${getHealthColor(status.system_health)} animate-pulse`} />
-            <span className="text-sm text-muted-foreground">{status.system_health}</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{status.system_health}</span>
           </div>
         </div>
       </CardHeader>
@@ -150,12 +150,12 @@ export default function TradingStatus() {
             {status.trading_enabled ? (
               <>
                 <PlayCircleIcon className="h-5 w-5 text-green-500" />
-                <span className="font-medium">Trading Actif</span>
+                <span className="font-medium text-gray-900 dark:text-white">Trading Actif</span>
               </>
             ) : (
               <>
                 <PauseCircleIcon className="h-5 w-5 text-red-500" />
-                <span className="font-medium">Trading Suspendu</span>
+                <span className="font-medium text-gray-900 dark:text-white">Trading Suspendu</span>
               </>
             )}
           </div>
@@ -167,26 +167,26 @@ export default function TradingStatus() {
         {/* Session de marché */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Session actuelle</span>
+            <span className="text-gray-600 dark:text-gray-400">Session actuelle</span>
             <span className={`font-medium ${getSessionColor(status.current_session)}`}>
               {status.current_session}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Heure UTC</span>
-            <span className="font-mono">{currentTime.toUTCString().split(' ')[4]}</span>
+            <span className="text-gray-600 dark:text-gray-400">Heure UTC</span>
+            <span className="font-mono text-gray-900 dark:text-white">{currentTime.toUTCString().split(' ')[4]}</span>
           </div>
         </div>
 
         {/* Limite quotidienne */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Trades aujourd'hui</span>
-            <span className="font-medium">{status.daily_trades} / {status.daily_limit}</span>
+            <span className="text-gray-600 dark:text-gray-400">Trades aujourd'hui</span>
+            <span className="font-medium text-gray-900 dark:text-white">{status.daily_trades} / {status.daily_limit}</span>
           </div>
           <Progress value={tradingProgress} className="h-2" />
           {tradingProgress >= 80 && (
-            <p className="text-xs text-yellow-500 flex items-center gap-1">
+            <p className="text-xs text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
               <ZapIcon className="h-3 w-3" />
               Approche de la limite quotidienne
             </p>
@@ -195,8 +195,8 @@ export default function TradingStatus() {
 
         {/* Dernier trade */}
         {status.last_trade_time && (
-          <div className="pt-2 border-t">
-            <p className="text-xs text-muted-foreground">
+          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               Dernier trade: {new Date(status.last_trade_time).toLocaleTimeString()}
             </p>
           </div>

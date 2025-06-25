@@ -147,10 +147,10 @@ export default function AlertsPanel() {
   }
 
   return (
-    <Card className="glass-card">
+    <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
             <AlertTriangleIcon className="h-5 w-5" />
             Alertes Trading
           </CardTitle>
@@ -161,9 +161,9 @@ export default function AlertsPanel() {
       </CardHeader>
       <CardContent>
         {!alerts || alerts.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
             <CheckCircleIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p>Aucune alerte active</p>
+            <p className="font-medium">Aucune alerte active</p>
             <p className="text-sm mt-1">Tous les systèmes fonctionnent normalement</p>
           </div>
         ) : (
@@ -172,7 +172,7 @@ export default function AlertsPanel() {
               {alerts.map((alert) => (
                 <Alert 
                   key={alert.id} 
-                  className={`cursor-pointer hover:opacity-80 transition-opacity`}
+                  className={`cursor-pointer hover:opacity-80 transition-opacity border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700`}
                   onClick={() => resolveAlert(alert.id)}
                 >
                   <div className="flex items-start gap-3">
@@ -184,23 +184,23 @@ export default function AlertsPanel() {
                         <Badge variant={getSeverityColor(alert.severity) as any}>
                           {alert.severity}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {formatTime(alert.created_at)}
                         </span>
                       </div>
-                      <AlertDescription className="text-sm">
+                      <AlertDescription className="text-sm text-gray-700 dark:text-gray-300">
                         {alert.message}
                       </AlertDescription>
                       {alert.action_required && (
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                           Action: {alert.action_required}
                         </p>
                       )}
                       {alert.value !== undefined && alert.value !== null && 
                        alert.threshold !== undefined && alert.threshold !== null && (
-                        <div className="flex gap-2 mt-2 text-xs">
+                        <div className="flex gap-2 mt-2 text-xs text-gray-600 dark:text-gray-400">
                           <span>Valeur: {alert.value.toFixed(2)}</span>
-                          <span className="text-muted-foreground">|</span>
+                          <span className="text-gray-400">|</span>
                           <span>Seuil: {alert.threshold.toFixed(2)}</span>
                         </div>
                       )}
