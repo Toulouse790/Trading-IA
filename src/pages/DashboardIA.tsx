@@ -1,5 +1,8 @@
+
 import React from "react";
 import AIAgentPanel from "@/components/AIAgentPanel";
+import MetricsOverview from "@/components/MetricsOverview";
+import EquityChart from "@/components/EquityChart";
 
 export default function DashboardIA() {
   // Simulé : données de logs IA (à remplacer par un fetch réel depuis Supabase)
@@ -11,6 +14,8 @@ export default function DashboardIA() {
 
   return (
     <div className="p-6 space-y-6">
+      <MetricsOverview />
+      
       <AIAgentPanel
         name="Expert EUR/USD – MWD Strategy"
         objective="+6 % hebdo"
@@ -18,6 +23,8 @@ export default function DashboardIA() {
         winRate={74.8}
         sharpeRatio={1.44}
       />
+
+      <EquityChart />
 
       <div className="bg-white rounded-2xl shadow p-4">
         <h3 className="text-lg font-bold mb-2">📈 Historique des entraînements</h3>

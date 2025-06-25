@@ -4,8 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import DashboardPage from "./pages/Dashboard";
-import AssistantManagement from "./pages/AssistantManagement";
+import DashboardIA from "./pages/DashboardIA";
 
 const queryClient = new QueryClient();
 
@@ -16,8 +15,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/assistants" element={<AssistantManagement />} />
+          <Route path="/" element={<DashboardIA />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
