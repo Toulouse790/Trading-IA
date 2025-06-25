@@ -1,15 +1,13 @@
-
 import React from "react";
-import AIAgentPanel from "@/components/AIAgentPanel";
 import MetricsOverview from "@/components/MetricsOverview";
 import EquityChart from "@/components/EquityChart";
 import AlertsPanel from "@/components/AlertsPanel";
 import TradingStatus from "@/components/TradingStatus";
-import TrainingHistory from "@/components/TrainingHistory";
 import BestRuns from "@/components/BestRuns";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { useTrainingLogs } from "@/hooks/useTrainingLogs";
-import { useSafeData } from "@/hooks/useSafeData";
+import AgentPerformanceDashboard from "@/components/AgentPerformanceDashboard"; // Nouveau composant pour plusieurs agents
+import { useTrainingLogs } from "@/hooks/useTrainingLogs"; // Conserver pour BestRuns si besoin
+import { useSafeData } from "@/hooks/useSafeData"; // Conserver pour BestRuns si besoin
 
 export default function DashboardIA() {
   const { data: trainingLogs, isLoading, error } = useTrainingLogs();
@@ -71,41 +69,32 @@ export default function DashboardIA() {
           <MetricsOverview />
         </ErrorBoundary>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <ErrorBoundary>
-              <AIAgentPanel
-                name="Expert EUR/USD – MWD Strategy"
-                objective="+6 % hebdo"
-                status="LEARNING"
-                winRate={74.8}
-                sharpeRatio={1.44}
-              />
-            </ErrorBoundary>
-          </div>
-          
-          <ErrorBoundary>
-            <TradingStatus />
-          </ErrorBoundary>
-        </div>
+        {/* Remplacé AIAgentPanel par AgentPerformanceDashboard pour plusieurs agents */}
+        <ErrorBoundary>
+            <AgentPerformanceDashboard />
+        </ErrorBoundary>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ErrorBoundary>
+            <TradingStatus />
+          </ErrorBoundary>
+          <ErrorBoundary>
             <AlertsPanel />
           </ErrorBoundary>
-          
-          <ErrorBoundary>
-            <BestRuns trainings={safeTrainingLogs} />
-          </ErrorBoundary>
         </div>
+
+        <ErrorBoundary>
+          <BestRuns trainings={safeTrainingLogs} />
+        </ErrorBoundary>
 
         <ErrorBoundary>
           <EquityChart />
         </ErrorBoundary>
 
-        <ErrorBoundary>
+        {/* TrainingHistory supprimé pour alléger la synthèse */}
+        {/* <ErrorBoundary>
           <TrainingHistory />
-        </ErrorBoundary>
+        </ErrorBoundary> */}
       </div>
     </div>
   );
