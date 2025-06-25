@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Agent } from "@/types/agent";
+import { Link } from "react-router-dom"; // Importation de Link
 
 export default function AgentPerformanceCard({ agent }: { agent: Agent }) {
   const getStatusColor = (status: Agent["status"]) => {
@@ -17,62 +18,65 @@ export default function AgentPerformanceCard({ agent }: { agent: Agent }) {
   };
 
   return (
-    <Card className="glass-card">
-      <CardHeader>
-        <CardTitle className="flex justify-between items-start">
-          <div>
-            <h3 className="text-lg font-semibold">{agent.agent_name}</h3>
-            <p className="text-sm text-muted-foreground">
-              {agent.currency_pair} • {agent.timeframe}
-            </p>
+    // La carte est maintenant un lien cliquable
+    <Link to={`/agent/${agent.agent_id}`} className="block h-full">
+      <Card className="glass-card h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-200">
+        <CardHeader>
+          <CardTitle className="flex justify-between items-start">
+            <div>
+              <h3 className="text-lg font-semibold">{agent.agent_name}</h3>
+              <p className="text-sm text-muted-foreground">
+                {agent.currency_pair} • {agent.timeframe}
+              </p>
+            </div>
+            <span className={`text-sm font-medium ${getStatusColor(agent.status)}`}>
+              {agent.status}
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Retour Semaine</p>
+              <p className="text-lg font-bold">
+                {agent.weekly_return_percentage?.toFixed(2) || "0.00"}%
+              </p>
+              <p className="text-sm text-muted-foreground">Taux de Réussite</p>
+              <p className="text-md font-semibold">
+                {agent.win_rate_percentage?.toFixed(1) || "0.0"}%
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Retour Cumulé</p>
+              <p className="text-md font-semibold">
+                {agent.cumulative_return_percentage?.toFixed(2) || "0.00"}%
+              </p>
+              <p className="text-sm text-muted-foreground">Drawdown Max</p>
+              <p className="text-md font-semibold">
+                {agent.max_drawdown_percentage?.toFixed(2) || "0.00"}%
+              </p>
+            </div>
           </div>
-          <span className={`text-sm font-medium ${getStatusColor(agent.status)}`}>
-            {agent.status}
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Retour Semaine</p>
-            <p className="text-lg font-bold">
-              {agent.weekly_return_percentage?.toFixed(2) || "0.00"}%
-            </p>
-            <p className="text-sm text-muted-foreground">Taux de Réussite</p>
-            <p className="text-md font-semibold">
-              {agent.win_rate_percentage?.toFixed(1) || "0.0"}%
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Retour Cumulé</p>
-            <p className="text-md font-semibold">
-              {agent.cumulative_return_percentage?.toFixed(2) || "0.00"}%
-            </p>
-            <p className="text-sm text-muted-foreground">Drawdown Max</p>
-            <p className="text-md font-semibold">
-              {agent.max_drawdown_percentage?.toFixed(2) || "0.00"}%
-            </p>
-          </div>
-        </div>
-        
-        {agent.equity_curve_data && agent.equity_curve_data.length > 0 && (
-          <div className="mt-4">
-            <ResponsiveContainer width="100%" height={100}>
-              <LineChart data={agent.equity_curve_data}>
-                <XAxis dataKey="date" hide />
-                <YAxis hide />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#8884d8" 
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          {agent.equity_curve_data && agent.equity_curve_data.length > 0 && (
+            <div className="mt-4">
+              <ResponsiveContainer width="100%" height={100}>
+                <LineChart data={agent.equity_curve_data}>
+                  <XAxis dataKey="date" hide />
+                  <YAxis hide />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#8884d8" 
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
