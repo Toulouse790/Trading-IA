@@ -1,4 +1,3 @@
-
 export interface EquityDataPoint {
   date: string;
   value: number;
