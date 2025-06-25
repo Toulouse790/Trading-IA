@@ -528,6 +528,48 @@ export type Database = {
         }
         Relationships: []
       }
+      trading_alerts: {
+        Row: {
+          action_required: string | null
+          alert_type: string
+          created_at: string
+          id: string
+          message: string
+          resolved: boolean
+          resolved_at: string | null
+          severity: string
+          threshold: number | null
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          action_required?: string | null
+          alert_type: string
+          created_at?: string
+          id?: string
+          message: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity: string
+          threshold?: number | null
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          action_required?: string | null
+          alert_type?: string
+          created_at?: string
+          id?: string
+          message?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          threshold?: number | null
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: []
+      }
       training_logs: {
         Row: {
           assistant_id: string | null

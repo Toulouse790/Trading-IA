@@ -21,18 +21,33 @@ interface TradingAlert {
 }
 
 export default function AlertsPanel() {
-  // Récupérer les alertes
+  // Récupérer les alertes en utilisant une requête SQL directe pour éviter les problèmes de types
   const { data: alerts, isLoading, refetch } = useQuery({
     queryKey: ['tradingAlerts'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('trading_alerts')
-        .select('*')
-        .eq('resolved', false)
-        .order('created_at', { ascending: false })
-        .limit(20);
-      
-      return data as TradingAlert[] || [];
+      try {
+        const { data, error } = await supabase
+          .rpc('get_unresolved_alerts', {})
+          .catch(async () => {
+            // Fallback: utiliser une requête directe si la fonction n'existe pas
+            return await supabase
+              .from('trading_alerts' as any)
+              .select('*')
+              .eq('resolved', false)
+              .order('created_at', { ascending: false })
+              .limit(20);
+          });
+        
+        if (error) {
+          console.error('Erreur lors de la récupération des alertes:', error);
+          return [];
+        }
+        
+        return (data as TradingAlert[]) || [];
+      } catch (error) {
+        console.error('Erreur dans la requête d\'alertes:', error);
+        return [];
+      }
     },
     refetchInterval: 10000 // Rafraîchir toutes les 10 secondes
   });
@@ -100,12 +115,20 @@ export default function AlertsPanel() {
   };
 
   const resolveAlert = async (alertId: string) => {
-    await supabase
-      .from('trading_alerts')
-      .update({ resolved: true, resolved_at: new Date().toISOString() })
-      .eq('id', alertId);
-    
-    refetch();
+    try {
+      const { error } = await supabase
+        .from('trading_alerts' as any)
+        .update({ resolved: true, resolved_at: new Date().toISOString() })
+        .eq('id', alertId);
+      
+      if (error) {
+        console.error('Erreur lors de la résolution de l\'alerte:', error);
+      } else {
+        refetch();
+      }
+    } catch (error) {
+      console.error('Erreur dans resolveAlert:', error);
+    }
   };
 
   if (isLoading) {
@@ -178,7 +201,8 @@ export default function AlertsPanel() {
                           Action: {alert.action_required}
                         </p>
                       )}
-                      {alert.value !== undefined && alert.threshold !== undefined && (
+                      {alert.value !== undefined && alert.value !== null && 
+                       alert.threshold !== undefined && alert.threshold !== null && (
                         <div className="flex gap-2 mt-2 text-xs">
                           <span>Valeur: {alert.value.toFixed(2)}</span>
                           <span className="text-muted-foreground">|</span>
