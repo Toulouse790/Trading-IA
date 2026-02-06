@@ -40,6 +40,8 @@ import AdvancedAnalysis from './components/AdvancedAnalysis';
 import TradingBotUI from './components/TradingBotUI';
 import TradingJournal from './components/TradingJournal';
 import MultiPairDashboard from './components/MultiPairDashboard';
+import ThemeToggle from './components/ThemeToggle';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { getMarketData } from './services/forexService';
 
 const STORAGE_KEY = 'trading_ia_settings_v1';
@@ -65,12 +67,13 @@ const INITIAL_PORTFOLIO: Portfolio = {
   tradeHistory: [],
 };
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.DASHBOARD);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [portfolio, setPortfolio] = useState<Portfolio>(INITIAL_PORTFOLIO);
   const [signals, setSignals] = useState<TradingSignal[]>([]);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_APP_SETTINGS);
+  const { isDark } = useTheme();
 
   // Charger les paramètres
   useEffect(() => {
@@ -345,7 +348,9 @@ const App: React.FC = () => {
       className={`flex items-center gap-3 px-4 py-3 w-full rounded-lg transition-all duration-200 ${
         currentView === view
           ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-900/30'
-          : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+          : isDark
+            ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
       }`}
     >
       <Icon className="w-5 h-5 flex-shrink-0" />
@@ -359,9 +364,13 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="h-screen bg-black text-gray-200 flex font-sans overflow-hidden">
+    <div className={`h-screen flex font-sans overflow-hidden transition-colors duration-300 ${
+      isDark ? 'bg-black text-gray-200' : 'bg-gray-50 text-gray-900'
+    }`}>
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a0a0a] border-b border-gray-800 z-40 flex items-center px-4 justify-between">
+      <div className={`md:hidden fixed top-0 left-0 right-0 h-16 border-b z-40 flex items-center px-4 justify-between transition-colors duration-300 ${
+        isDark ? 'bg-[#0a0a0a] border-gray-800' : 'bg-white border-gray-200'
+      }`}>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-white" />
@@ -370,40 +379,47 @@ const App: React.FC = () => {
             Trading IA
           </h1>
         </div>
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 text-gray-400 hover:text-white"
-        >
-          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle compact />
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className={`p-2 ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/80 z-30 md:hidden backdrop-blur-sm"
+          className={`fixed inset-0 z-30 md:hidden backdrop-blur-sm ${isDark ? 'bg-black/80' : 'bg-gray-900/50'}`}
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-[#0a0a0a] border-r border-gray-800 flex flex-col p-4 transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-40 w-64 border-r flex flex-col p-4 transition-all duration-300 ease-in-out
         md:relative md:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         mt-16 md:mt-0
+        ${isDark ? 'bg-[#0a0a0a] border-gray-800' : 'bg-white border-gray-200'}
       `}>
         {/* Logo Desktop */}
-        <div className="hidden md:flex mb-8 px-2 items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <TrendingUp className="w-6 h-6 text-white" />
+        <div className="hidden md:flex mb-6 px-2 items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                Trading IA
+              </h1>
+              <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>EUR/USD Forex</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-              Trading IA
-            </h1>
-            <p className="text-xs text-gray-500">EUR/USD Forex</p>
-          </div>
+          <ThemeToggle compact />
         </div>
 
         {/* Navigation */}
@@ -437,7 +453,7 @@ const App: React.FC = () => {
           />
 
           {/* Separator */}
-          <div className="my-3 border-t border-gray-800" />
+          <div className={`my-3 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`} />
 
           <NavItem
             view={View.ADVANCED}
@@ -467,10 +483,14 @@ const App: React.FC = () => {
         </nav>
 
         {/* Portfolio Summary */}
-        <div className="pt-4 border-t border-gray-800 mt-auto mb-20 md:mb-0">
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className={`pt-4 border-t mt-auto mb-20 md:mb-0 ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
+          <div className={`rounded-xl p-4 border transition-colors ${
+            isDark
+              ? 'bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700'
+              : 'bg-gradient-to-br from-gray-100 to-white border-gray-200'
+          }`}>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-gray-500">Balance</p>
+              <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Balance</p>
               <span className={`text-xs px-2 py-0.5 rounded ${
                 portfolio.unrealizedPnl >= 0
                   ? 'bg-emerald-500/20 text-emerald-400'
@@ -480,17 +500,17 @@ const App: React.FC = () => {
                 {portfolio.unrealizedPnl.toFixed(2)}$
               </span>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
               ${portfolio.balance.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}
             </p>
-            <div className="mt-3 pt-3 border-t border-gray-700 grid grid-cols-2 gap-2 text-xs">
+            <div className={`mt-3 pt-3 border-t grid grid-cols-2 gap-2 text-xs ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
               <div>
-                <p className="text-gray-500">Positions</p>
-                <p className="text-white font-medium">{portfolio.positions.length}</p>
+                <p className={isDark ? 'text-gray-500' : 'text-gray-400'}>Positions</p>
+                <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{portfolio.positions.length}</p>
               </div>
               <div>
-                <p className="text-gray-500">Win Rate</p>
-                <p className="text-white font-medium">{portfolio.winRate.toFixed(1)}%</p>
+                <p className={isDark ? 'text-gray-500' : 'text-gray-400'}>Win Rate</p>
+                <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{portfolio.winRate.toFixed(1)}%</p>
               </div>
             </div>
           </div>
@@ -498,8 +518,12 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col bg-[#050505] overflow-hidden relative pt-16 md:pt-0 h-[100dvh]">
-        <div className="absolute top-0 left-0 w-full h-64 bg-emerald-900/10 blur-3xl pointer-events-none" />
+      <main className={`flex-grow flex flex-col overflow-hidden relative pt-16 md:pt-0 h-[100dvh] transition-colors duration-300 ${
+        isDark ? 'bg-[#050505]' : 'bg-gray-50'
+      }`}>
+        <div className={`absolute top-0 left-0 w-full h-64 blur-3xl pointer-events-none ${
+          isDark ? 'bg-emerald-900/10' : 'bg-emerald-500/5'
+        }`} />
 
         {currentView === View.DASHBOARD && (
           <TradingDashboard
@@ -512,8 +536,8 @@ const App: React.FC = () => {
         {currentView === View.TRADING && (
           <div className="flex-1 overflow-y-auto p-4 md:p-6">
             <div className="mb-4">
-              <h1 className="text-2xl font-bold text-white">Graphique EUR/USD</h1>
-              <p className="text-gray-400">Analyse technique en temps réel</p>
+              <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Graphique EUR/USD</h1>
+              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Analyse technique en temps reel</p>
             </div>
             <ForexChart />
           </div>
@@ -561,6 +585,15 @@ const App: React.FC = () => {
         )}
       </main>
     </div>
+  );
+};
+
+// Main App wrapper with ThemeProvider
+const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 };
 
