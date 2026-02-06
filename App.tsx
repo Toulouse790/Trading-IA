@@ -14,6 +14,10 @@ import {
   X,
   TrendingUp,
   Bell,
+  Brain,
+  Bot,
+  BookOpen,
+  Globe,
 } from 'lucide-react';
 import {
   View,
@@ -32,6 +36,10 @@ import Backtesting from './components/Backtesting';
 import PortfolioComponent from './components/Portfolio';
 import ForexChart from './components/ForexChart';
 import SettingsComponent from './components/Settings';
+import AdvancedAnalysis from './components/AdvancedAnalysis';
+import TradingBotUI from './components/TradingBotUI';
+import TradingJournal from './components/TradingJournal';
+import MultiPairDashboard from './components/MultiPairDashboard';
 import { getMarketData } from './services/forexService';
 
 const STORAGE_KEY = 'trading_ia_settings_v1';
@@ -427,10 +435,34 @@ const App: React.FC = () => {
             label="Portefeuille"
             badge={portfolio.positions.length}
           />
+
+          {/* Separator */}
+          <div className="my-3 border-t border-gray-800" />
+
+          <NavItem
+            view={View.ADVANCED}
+            icon={Brain}
+            label="Analyse Avancee"
+          />
+          <NavItem
+            view={View.BOT}
+            icon={Bot}
+            label="Trading Bot"
+          />
+          <NavItem
+            view={View.MULTI_PAIR}
+            icon={Globe}
+            label="Multi-Paires"
+          />
+          <NavItem
+            view={View.JOURNAL}
+            icon={BookOpen}
+            label="Journal"
+          />
           <NavItem
             view={View.SETTINGS}
             icon={Settings}
-            label="Paramètres"
+            label="Parametres"
           />
         </nav>
 
@@ -510,6 +542,22 @@ const App: React.FC = () => {
 
         {currentView === View.SETTINGS && (
           <SettingsComponent />
+        )}
+
+        {currentView === View.ADVANCED && (
+          <AdvancedAnalysis />
+        )}
+
+        {currentView === View.BOT && (
+          <TradingBotUI onSignalGenerated={handleSignalGenerated} />
+        )}
+
+        {currentView === View.MULTI_PAIR && (
+          <MultiPairDashboard />
+        )}
+
+        {currentView === View.JOURNAL && (
+          <TradingJournal />
         )}
       </main>
     </div>

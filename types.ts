@@ -22,6 +22,10 @@ export enum View {
   BACKTESTING = 'backtesting',
   PORTFOLIO = 'portfolio',
   SETTINGS = 'settings',
+  ADVANCED = 'advanced',
+  BOT = 'bot',
+  JOURNAL = 'journal',
+  MULTI_PAIR = 'multi_pair',
 }
 
 export enum TimeFrame {
