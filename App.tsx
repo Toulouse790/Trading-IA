@@ -30,6 +30,8 @@ import TradingDashboard from './components/TradingDashboard';
 import TradingSignals from './components/TradingSignals';
 import Backtesting from './components/Backtesting';
 import PortfolioComponent from './components/Portfolio';
+import ForexChart from './components/ForexChart';
+import SettingsComponent from './components/Settings';
 import { getMarketData } from './services/forexService';
 
 const STORAGE_KEY = 'trading_ia_settings_v1';
@@ -404,6 +406,11 @@ const App: React.FC = () => {
             label="Dashboard"
           />
           <NavItem
+            view={View.TRADING}
+            icon={LineChart}
+            label="Graphique"
+          />
+          <NavItem
             view={View.SIGNALS}
             icon={Zap}
             label="Signaux IA"
@@ -419,6 +426,11 @@ const App: React.FC = () => {
             icon={Wallet}
             label="Portefeuille"
             badge={portfolio.positions.length}
+          />
+          <NavItem
+            view={View.SETTINGS}
+            icon={Settings}
+            label="Paramètres"
           />
         </nav>
 
@@ -465,6 +477,16 @@ const App: React.FC = () => {
           />
         )}
 
+        {currentView === View.TRADING && (
+          <div className="flex-1 overflow-y-auto p-4 md:p-6">
+            <div className="mb-4">
+              <h1 className="text-2xl font-bold text-white">Graphique EUR/USD</h1>
+              <p className="text-gray-400">Analyse technique en temps réel</p>
+            </div>
+            <ForexChart />
+          </div>
+        )}
+
         {currentView === View.SIGNALS && (
           <TradingSignals
             signals={signals}
@@ -484,6 +506,10 @@ const App: React.FC = () => {
             onModifyPosition={modifyPosition}
             onOpenPosition={openPosition}
           />
+        )}
+
+        {currentView === View.SETTINGS && (
+          <SettingsComponent />
         )}
       </main>
     </div>

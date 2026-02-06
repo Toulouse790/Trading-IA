@@ -15,6 +15,8 @@ import {
   Clock,
   ArrowUpRight,
   ArrowDownRight,
+  Calendar,
+  Newspaper,
 } from 'lucide-react';
 import {
   MarketData,
@@ -27,6 +29,8 @@ import {
 } from '../types';
 import { getMarketData, generateHistoricalCandles, calculateAllIndicators } from '../services/forexService';
 import { analyzeMarket, generateTradingSignal } from '../services/tradingAIService';
+import EconomicCalendar from './EconomicCalendar';
+import NewsPanel from './NewsPanel';
 
 interface TradingDashboardProps {
   portfolio: Portfolio;
@@ -392,6 +396,12 @@ const TradingDashboard: React.FC<TradingDashboardProps> = ({
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Calendrier Économique et News */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <EconomicCalendar compact={true} />
+        <NewsPanel compact={true} />
       </div>
     </div>
   );
