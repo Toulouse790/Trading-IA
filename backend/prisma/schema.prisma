@@ -1,0 +1,357 @@
+// ===========================================
+// Trading-IA Database Schema
+// ===========================================
+// Ce schéma définit la structure de la base de données
+// pour la plateforme de trading Forex avec IA.
+//
+// Commandes utiles:
+// - npx prisma generate     : Génère le client Prisma
+// - npx prisma migrate dev  : Crée et applique les migrations
+// - npx prisma db push      : Push le schéma sans migration (dev)
+// - npx prisma studio       : Interface visuelle pour la DB
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// FOREX PAIRS
+// ===========================================
+// Table des paires de devises disponibles
+
+model ForexPair {
+  id          String   @id @default(cuid())
+  symbol      String   @unique // Ex: "EURUSD", "GBPUSD"
+  displayName String   // Ex: "EUR/USD"
+  description String?  // Ex: "Euro vs US Dollar"
+  baseCurrency  String // Ex: "EUR"
+  quoteCurrency String // Ex: "USD"
+  pipValue    Float    @default(0.0001) // Valeur d'un pip
+  lotSize     Int      @default(100000) // Taille d'un lot standard
+  minLotSize  Float    @default(0.01)   // Lot minimum
+  maxLotSize  Float    @default(100)    // Lot maximum
+  spreadPips  Float    @default(1.5)    // Spread moyen en pips
+  isActive    Boolean  @default(true)   // Paire active pour le trading
+  isMajor     Boolean  @default(false)  // Paire majeure
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  candles     ForexCandle[]
+  signals     Signal[]
+  trades      Trade[]
+
+  @@index([symbol])
+  @@index([isActive])
+  @@map("forex_pairs")
+}
+
+// ===========================================
+// FOREX CANDLES
+// ===========================================
+// Données historiques OHLCV par timeframe
+
+model ForexCandle {
+  id        String   @id @default(cuid())
+  pairId    String
+  pair      ForexPair @relation(fields: [pairId], references: [id], onDelete: Cascade)
+
+  timeframe String   // "M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1"
+  timestamp DateTime // Timestamp de la bougie
+
+  open      Float    // Prix d'ouverture
+  high      Float    // Prix le plus haut
+  low       Float    // Prix le plus bas
+  close     Float    // Prix de clôture
+  volume    Float    @default(0) // Volume (si disponible)
+
+  createdAt DateTime @default(now())
+
+  // Index composé pour recherches rapides
+  @@unique([pairId, timeframe, timestamp])
+  @@index([pairId, timeframe])
+  @@index([timestamp])
+  @@map("forex_candles")
+}
+
+// ===========================================
+// SIGNALS
+// ===========================================
+// Signaux de trading générés par ML/IA
+
+model Signal {
+  id            String   @id @default(cuid())
+  pairId        String
+  pair          ForexPair @relation(fields: [pairId], references: [id], onDelete: Cascade)
+
+  timeframe     String   // Timeframe d'analyse
+  timestamp     DateTime @default(now()) // Quand le signal a été généré
+
+  direction     SignalDirection // BUY, SELL, NO_TRADE
+  confidence    Float    // Score de confiance 0.0 à 1.0
+
+  entryPrice    Float?   // Prix d'entrée suggéré
+  takeProfit    Float?   // Take profit suggéré
+  stopLoss      Float?   // Stop loss suggéré
+  riskReward    Float?   // Ratio risk/reward
+
+  reasonSummary String   // Résumé court pour l'UI
+  reasonDetails String?  // Détails complets (JSON ou texte)
+
+  // Métadonnées du modèle
+  source        SignalSource // ML, LLM, HYBRID, MANUAL
+  modelVersion  String?  // Version du modèle utilisé
+  modelName     String?  // Nom du modèle
+
+  // Indicateurs utilisés (JSON)
+  indicators    Json?    // { rsi: 65, macd: {...}, ... }
+
+  // Status
+  isActive      Boolean  @default(true)
+  expiresAt     DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  trades        Trade[]
+
+  @@index([pairId, timeframe])
+  @@index([timestamp])
+  @@index([direction])
+  @@index([isActive])
+  @@map("signals")
+}
+
+enum SignalDirection {
+  BUY
+  SELL
+  NO_TRADE
+}
+
+enum SignalSource {
+  ML
+  LLM
+  HYBRID
+  MANUAL
+  RULES
+}
+
+// ===========================================
+// TRADES
+// ===========================================
+// Historique des trades (simulés ou réels)
+
+model Trade {
+  id            String   @id @default(cuid())
+  pairId        String
+  pair          ForexPair @relation(fields: [pairId], references: [id], onDelete: Cascade)
+
+  signalId      String?  // Signal source (optionnel)
+  signal        Signal?  @relation(fields: [signalId], references: [id], onDelete: SetNull)
+
+  timeframe     String?  // Timeframe utilisé
+  direction     TradeDirection // LONG, SHORT
+
+  entryPrice    Float    // Prix d'entrée réel
+  exitPrice     Float?   // Prix de sortie (null si ouvert)
+  takeProfit    Float?   // TP défini
+  stopLoss      Float?   // SL défini
+
+  positionSize  Float    // Taille en lots
+  leverage      Float    @default(1) // Levier utilisé
+
+  openedAt      DateTime @default(now())
+  closedAt      DateTime? // Null si trade ouvert
+
+  pnl           Float?   // Profit/Loss en devise de compte
+  pnlPips       Float?   // P&L en pips
+  pnlPercent    Float?   // P&L en pourcentage
+
+  commission    Float    @default(0) // Frais
+  swap          Float    @default(0) // Swap overnight
+
+  status        TradeStatus @default(OPEN)
+  closeReason   String?  // "TP", "SL", "MANUAL", "SIGNAL", etc.
+
+  notes         String?  // Notes du trader
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([pairId])
+  @@index([signalId])
+  @@index([status])
+  @@index([openedAt])
+  @@map("trades")
+}
+
+enum TradeDirection {
+  LONG
+  SHORT
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+// ===========================================
+// ML MODELS
+// ===========================================
+// Registry des modèles ML entraînés
+
+model MLModel {
+  id          String   @id @default(cuid())
+  name        String   // Nom du modèle
+  version     String   // Version (ex: "1.0.0")
+  type        ModelType // LSTM, XGBOOST, LINEAR, KNN, ENSEMBLE
+
+  description String?  // Description du modèle
+
+  // Configuration du modèle (JSON)
+  config      Json?    // Hyperparamètres, architecture, etc.
+
+  // Métriques de performance (JSON)
+  metrics     Json?    // { sharpe: 1.5, winrate: 0.65, maxDrawdown: 0.12, ... }
+
+  // État
+  isActive    Boolean  @default(false) // Modèle actif pour la production
+  isDefault   Boolean  @default(false) // Modèle par défaut
+
+  // Fichier du modèle (chemin ou URL)
+  modelPath   String?  // Chemin vers le fichier du modèle
+
+  trainedAt   DateTime? // Date d'entraînement
+  trainedOn   String?   // Description des données d'entraînement
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name, version])
+  @@index([type])
+  @@index([isActive])
+  @@map("ml_models")
+}
+
+enum ModelType {
+  LSTM
+  XGBOOST
+  LINEAR
+  KNN
+  ENSEMBLE
+  TRANSFORMER
+  RANDOM_FOREST
+  CUSTOM
+}
+
+// ===========================================
+// ECONOMIC EVENTS
+// ===========================================
+// Calendrier économique
+
+model EconomicEvent {
+  id          String   @id @default(cuid())
+
+  eventName   String   // Nom de l'événement
+  country     String   // Code pays (US, EU, GB, JP, etc.)
+  currency    String   // Devise impactée
+
+  timestamp   DateTime // Date/heure de l'événement
+
+  impact      EventImpact // HIGH, MEDIUM, LOW
+
+  forecast    String?  // Prévision
+  previous    String?  // Valeur précédente
+  actual      String?  // Valeur réelle (après publication)
+
+  description String?  // Description détaillée
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([timestamp])
+  @@index([currency])
+  @@index([impact])
+  @@map("economic_events")
+}
+
+enum EventImpact {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ===========================================
+// MARKET NEWS
+// ===========================================
+// News et analyses de marché
+
+model MarketNews {
+  id          String   @id @default(cuid())
+
+  title       String
+  summary     String?
+  content     String?  // Contenu complet
+
+  source      String   // Source de la news
+  sourceUrl   String?  // URL originale
+
+  publishedAt DateTime
+
+  // Analyse sentiment (par IA)
+  sentiment   NewsSentiment? // BULLISH, BEARISH, NEUTRAL
+  sentimentScore Float?      // Score -1.0 à 1.0
+
+  // Paires/devises concernées
+  currencies  String[] // ["EUR", "USD", ...]
+
+  isProcessed Boolean  @default(false) // Analysée par IA
+
+  createdAt   DateTime @default(now())
+
+  @@index([publishedAt])
+  @@index([sentiment])
+  @@map("market_news")
+}
+
+enum NewsSentiment {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+// ===========================================
+// SYSTEM LOGS
+// ===========================================
+// Logs système pour debugging et audit
+
+model SystemLog {
+  id        String   @id @default(cuid())
+
+  level     LogLevel // INFO, WARN, ERROR, DEBUG
+  category  String   // "API", "ML", "SIGNAL", "TRADE", etc.
+  message   String
+
+  metadata  Json?    // Données additionnelles
+
+  createdAt DateTime @default(now())
+
+  @@index([level])
+  @@index([category])
+  @@index([createdAt])
+  @@map("system_logs")
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
